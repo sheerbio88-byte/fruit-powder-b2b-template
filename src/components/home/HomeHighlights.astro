@@ -1,0 +1,31 @@
+---
+interface Card {
+  title: string;
+  lines: string[];
+}
+
+interface Props {
+  cards: Card[];
+}
+
+const { cards } = Astro.props;
+---
+
+<section class="ssf-home-points not-prose bg-soft py-14">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {
+        cards.map((card) => (
+          <article class="flex h-full flex-col border border-stone-200/80 bg-elevated px-5 py-5">
+            <h2 class="font-heading text-lg font-semibold text-heading">{card.title}</h2>
+            <ul class="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+              {card.lines.map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

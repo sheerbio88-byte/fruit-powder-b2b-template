@@ -1,0 +1,49 @@
+---
+import { APP_BLOG } from 'astrowind:config';
+import type { Post } from '~/types';
+import { getPermalink } from '~/utils/permalinks';
+
+export interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : '';
+const categoryLabel = post.category?.title || 'Guide';
+---
+
+<article class="mb-6 transition intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+  {
+    link ? (
+      <a class="relative block mb-5 group" href={link}>
+        <div class="relative aspect-video overflow-hidden rounded-xl border border-stone-200/80 bg-soft">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/10" aria-hidden="true" />
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-heading text-2xl font-semibold text-primary/40 tracking-tight">Sheer Superfood</span>
+          </div>
+          <span class="absolute bottom-3 left-3 text-[10px] font-semibold uppercase tracking-[0.14em] bg-elevated/95 border border-stone-200/80 px-2 py-1 text-heading">
+            {categoryLabel}
+          </span>
+        </div>
+      </a>
+    ) : (
+      <div class="relative aspect-video overflow-hidden rounded-xl border border-stone-200/80 bg-soft mb-5">
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/10" aria-hidden="true" />
+      </div>
+    )
+  }
+
+  <h3 class="text-xl sm:text-2xl font-heading font-semibold leading-tight mb-2 text-heading">
+    {
+      link ? (
+        <a class="inline-block hover:text-primary transition" href={link}>
+          {post.title}
+        </a>
+      ) : (
+        post.title
+      )
+    }
+  </h3>
+
+  {post.excerpt && <p class="text-muted text-base leading-relaxed">{post.excerpt}</p>}
+</article>

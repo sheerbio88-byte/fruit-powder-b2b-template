@@ -1,0 +1,524 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import FormContainer from '~/components/ui/Form.astro';
+import UbeLandingScript from '~/components/landing/UbeLandingScript.astro';
+import { Icon } from 'astro-icon/components';
+import { getInquiryForm } from '~/i18n/forms';
+
+const form = getInquiryForm('en');
+
+const metadata = {
+  title: 'Bag-Packed Ube Powder for Stores | Sheer Superfood',
+  description:
+    'Bag-packed ube powder (purple yam, 紫山药) for stores, Amazon, and private label. The same powder is also available in bulk. Quote from SheerHerb in Xi’an.',
+  ignoreTitleTemplate: true,
+  robots: { index: false, follow: true },
+  canonical: 'https://sheersuperfood.com/landing/fruit-powder-seller-direct-ads/',
+};
+
+
+const POWDER = '/images/landing/ube-powder.jpg';
+const BAG = '/images/landing/ube-powder-bag.jpg';
+const COURT = '/wp-content/uploads/2025/12/微信图片_20251209155736_15_21-scaled-e1765536153454.jpg';
+const BUILDING = '/wp-content/uploads/2025/12/微信图片_20251209163957_6_23.jpg';
+const EXTERIOR = '/wp-content/uploads/2025/12/车间.jpg';
+const LINE = '/wp-content/uploads/2025/12/微信图片_20251209163958_7_23-1.jpg';
+
+const trust = [
+  { label: 'Plain bags', hint: 'No brand printed' },
+  { label: 'Same powder', hint: 'Bulk if you pack it' },
+  { label: 'Private label', hint: 'On the form' },
+  { label: 'Xi’an', hint: 'R&D and production' },
+];
+
+const jumpNav = [
+  { href: '#bag-packing', season: 'Stores', label: 'Bag packing', src: BAG, alt: 'Plain purple pouch of ube powder' },
+  { href: '#bulk', season: 'You pack it', label: 'Bulk powder', src: POWDER, alt: 'Purple yam and ube powder' },
+  { href: '#private-label', season: 'Your brand', label: 'Private label', src: BAG, alt: 'Plain pouch for a private label' },
+];
+
+const series = [
+  {
+    id: 'bag-packing',
+    season: 'For the shelf',
+    name: 'Bag packing',
+    tagline: 'Plain purple pouch · no printed brand',
+    hook: 'Purple yam powder in plain bags for shops, Amazon, and other stores. Write the bag size you need in the message. This page does not publish one bag weight.',
+    forWhom: 'Online stores, Amazon sellers, supermarkets, pharmacies, and food brands',
+    highlights: [
+      'The pouch in the photo has no logo',
+      'Same powder as the bulk offer',
+      'Bag packing is already filled in on the form',
+    ],
+    gallery: [
+      { src: BAG, alt: 'Plain purple pouch of ube powder next to a white bowl of the same powder' },
+      { src: POWDER, alt: 'Cut purple yam beside a bowl of purple ube powder' },
+      { src: LINE, alt: 'Stainless processing line at the Xi’an plant' },
+      { src: COURT, alt: 'Courtyard at the Xi’an plant' },
+    ],
+    quoteLabel: 'Quote the bags',
+    quoteValue: 'Ube powder, bag packing',
+  },
+  {
+    id: 'bulk',
+    season: 'You pack it',
+    name: 'Bulk powder',
+    tagline: 'Purple yam · ube · 紫山药',
+    hook: 'The same purple yam powder, without bags, for buyers who pack it themselves. It is not purple sweet potato, and it is not the white yam powder in the catalog.',
+    forWhom: 'Brands and factories that already have a packing line',
+    highlights: ['Cut tuber is purple', 'Specification goes in the message', 'No 1–5 kg or 25 kg line is added here'],
+    gallery: [
+      { src: POWDER, alt: 'Cut purple yam beside a bowl of purple ube powder' },
+      { src: BAG, alt: 'Plain purple pouch of the same powder' },
+      { src: EXTERIOR, alt: 'Plant exterior' },
+      { src: BUILDING, alt: 'Plant building' },
+    ],
+    quoteLabel: 'Quote the bulk',
+    quoteValue: 'Ube powder, bulk',
+  },
+  {
+    id: 'private-label',
+    season: 'Your name on the bag',
+    name: 'Private label',
+    tagline: 'The bag pack, with branding on the form',
+    hook: 'Start from the plain bag. Private label branding and custom OEM are choices on the form. Logo, bag size, and channel go in the message.',
+    forWhom: 'Brands that want the bag to carry their name',
+    highlights: [
+      'The photo is still the unlabeled pouch',
+      'Not a new ingredient',
+      'Homepage certificates stay the company list',
+    ],
+    gallery: [
+      { src: BAG, alt: 'Plain purple pouch that can take a private label' },
+      { src: POWDER, alt: 'Purple ube powder' },
+      { src: LINE, alt: 'Stainless processing line' },
+      { src: EXTERIOR, alt: 'Plant exterior' },
+    ],
+    quoteLabel: 'Quote private label',
+    quoteValue: 'Ube powder, bag packing, private label',
+  },
+];
+
+const strengths = [
+  {
+    title: 'Bags first',
+    desc: 'This page opens on bag packing. Bulk and private label are the other two looks.',
+    icon: 'tabler:shopping-bag',
+  },
+  {
+    title: 'Channels on the form',
+    desc: 'Online store / Amazon, supermarket, pharmacy, food brand, and distributor.',
+    icon: 'tabler:building-store',
+  },
+  {
+    title: 'Factory in Xi’an',
+    desc: 'SheerHerb integrates R&D, production, and sales.',
+    icon: 'tabler:building-factory',
+  },
+  {
+    title: 'Homepage certificates',
+    desc: 'HACCP, USDA Organic, ISO 9001, Halal / Kosher. Not a separate file for this powder.',
+    icon: 'tabler:certificate',
+  },
+];
+
+const steps = [
+  { n: '01', title: 'Pick a look', body: 'Bags, bulk, or private label. The button writes it into the product field.' },
+  { n: '02', title: 'Name the channel', body: 'Store, Amazon, supermarket, pharmacy, brand, or distributor.' },
+  { n: '03', title: 'Pick a volume band', body: 'Sample only through 1,000 kg+. No minimum is published here.' },
+  { n: '04', title: 'Read the quote', body: 'Price, bag size, and timing come back with the quote.' },
+];
+
+const shipStrip = [
+  { label: 'DHL', icon: 'tabler:truck' },
+  { label: 'FedEx', icon: 'tabler:truck-delivery' },
+  { label: 'UPS', icon: 'tabler:package' },
+  { label: 'Air freight', icon: 'tabler:plane' },
+  { label: 'Sea freight', icon: 'tabler:ship' },
+];
+
+const faqs = [
+  {
+    q: 'Is the bag the same powder as the bulk?',
+    a: 'Yes. Both are purple yam powder, also called ube (紫山药). Bag packing is that powder in plain bags. Bulk is the same powder if you pack it yourself.',
+  },
+  {
+    q: 'Is this purple sweet potato?',
+    a: 'No. Purple sweet potato is a different plant. The white yam powder in the catalog is also a different product.',
+  },
+  {
+    q: 'Can this be my brand?',
+    a: 'The form includes private label branding and custom OEM. Tell us the bag size in the message. This page does not publish one bag weight, and the pouch in the photo has no printed brand.',
+  },
+  {
+    q: 'What volume can I ask for?',
+    a: 'No single minimum is published. Choose sample only, under 100 kg, 100–500 kg, 500–1,000 kg, or 1,000 kg+.',
+  },
+  {
+    q: 'Which certificates are listed?',
+    a: 'The homepage lists HACCP, USDA Organic, ISO 9001, and Halal / Kosher. That is the company list. This page does not claim a separate certificate for this powder.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <div id="seasonal-landing" class="seasonal-landing text-[#1a1714]" data-ube-default="Ube powder, bag packing">
+    <p class="bg-[#1a1714] px-4 py-2 text-center text-xs uppercase tracking-[0.14em] text-[#f6f1e8]">
+      Bag packing · Bulk · Private label · Purple yam · 紫山药
+    </p>
+    <header class="sticky top-0 z-50 border-b border-[#e4d8c4] bg-[#f6f1e8]/95 backdrop-blur">
+      <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <span class="inline-flex items-center gap-2 text-[#1a1714]">
+          <img
+            src="/wp-content/uploads/2025/12/cropped-cropped-logo03-e1765874141220.png"
+            alt="Sheer Superfood"
+            width="162"
+            height="54"
+            class="h-8 w-auto"
+          />
+        </span>
+        <div class="flex items-center gap-2">
+          <a href="#inquiry-form" class="seasonal-btn-ghost !px-3 !py-2 text-sm">Quote</a>
+          <button type="button" data-open-quote class="seasonal-btn-primary !px-3 !py-2 text-sm">Get a quote</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="bg-[#f6f1e8]">
+      <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div class="grid items-start gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+          <div>
+            <p class="seasonal-kicker">Ube powder · Factory direct</p>
+            <h1 class="seasonal-display mt-2 text-3xl leading-tight text-[#1a1714] sm:text-4xl">
+              Bags for the shelf.<br />
+              Bulk if you pack it.<br />
+              Your label on request.
+            </h1>
+            <p class="mt-4 max-w-xl text-base leading-relaxed text-[#5c534a]">
+              Purple yam powder, also called ube (紫山药), in a plain bag for stores. The same powder is available in
+              bulk. This page does not publish a bag weight or a minimum order.
+            </p>
+            <ul class="mt-4 space-y-2 text-sm text-[#3f3a34]">
+              <li class="flex gap-2.5">
+                <Icon name="tabler:check" class="mt-0.5 h-5 w-5 shrink-0 text-[#9a6b2f]" aria-hidden="true" />
+                Plain pouch in the photo — no brand is printed on it
+              </li>
+              <li class="flex gap-2.5">
+                <Icon name="tabler:check" class="mt-0.5 h-5 w-5 shrink-0 text-[#9a6b2f]" aria-hidden="true" />
+                Not purple sweet potato, and not white yam powder
+              </li>
+              <li class="flex gap-2.5">
+                <Icon name="tabler:check" class="mt-0.5 h-5 w-5 shrink-0 text-[#9a6b2f]" aria-hidden="true" />
+                Volume bands on the form, from sample only to 1,000 kg+
+              </li>
+            </ul>
+            <div class="mt-5 flex flex-wrap gap-3">
+              <a href="#inquiry-form" class="seasonal-btn-primary">Get bag pricing</a>
+              <a href="#sets" class="seasonal-btn-ghost">Browse the packs</a>
+            </div>
+            <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {
+                trust.map((item) => (
+                  <div class="border border-[#e4d8c4] bg-[#fffdf8]/80 px-3 py-3">
+                    <p class="text-sm font-semibold tracking-tight">{item.label}</p>
+                    <p class="mt-1 text-xs text-[#6b6258]">{item.hint}</p>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div
+            id="inquiry-form"
+            class="scroll-mt-20 border border-[#e4d8c4] bg-[#fffdf8] p-5 shadow-[0_16px_40px_-24px_rgba(26,23,20,0.35)] sm:p-6"
+          >
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#9a6b2f]">Factory quote</p>
+            <h2 class="seasonal-display mt-1 text-2xl leading-tight text-[#1a1714]">Bag packing is filled in</h2>
+            <p class="mt-2 text-sm leading-relaxed text-[#6b6258]">
+              Switch it from the packs below. Price and timing come back with the quote.
+            </p>
+            <p id="ube-pick" hidden class="mt-3 border border-[#e4d8c4] bg-[#f6f1e8] px-3 py-2 text-sm font-medium text-[#1a1714]"></p>
+            <div class="mt-4">
+              <FormContainer
+                formId="landing-inquiry"
+                compact
+                inputs={form.inputs}
+                textarea={{ ...form.textarea, rows: 2 }}
+                disclaimer={form.disclaimer}
+                button="Send this quote"
+                description={form.description}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-[#e4d8c4] bg-[#fffdf8]">
+      <div class="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-3 gap-2 sm:gap-4">
+          {
+            jumpNav.map((item) => (
+              <a href={item.href} class="group block overflow-hidden">
+                <div class="aspect-[3/2] overflow-hidden bg-[#f6f1e8]">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width="800"
+                    height="600"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <p class="mt-2 text-xs uppercase tracking-[0.14em] text-[#9a6b2f]">{item.season}</p>
+                <p class="text-sm font-medium leading-tight sm:text-base">{item.label}</p>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="sets" class="scroll-mt-20 bg-[#f6f1e8] py-12 md:py-14">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <p class="seasonal-kicker">The packs</p>
+        <h2 class="seasonal-display mt-2 text-2xl text-[#1a1714] md:text-3xl">Choose the pack you sell</h2>
+        <p class="mt-3 max-w-2xl leading-relaxed text-[#5c534a]">
+          Three ways to ask for the same purple yam powder. Tap a pack and the product field updates.
+        </p>
+        <div class="mt-10 space-y-12 md:space-y-14">
+          {
+            series.map((block, index) => {
+              const reverse = index % 2 === 1;
+              const hero = block.gallery[0];
+              const thumbs = block.gallery.slice(1);
+              return (
+                <article id={block.id} class="scroll-mt-24 grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                  <div class:list={[reverse && 'lg:order-2']}>
+                    <div class="flex flex-col gap-2 sm:gap-3">
+                      <figure class="m-0 aspect-[4/3] overflow-hidden bg-[#e4d8c4]">
+                        <img
+                          src={hero.src}
+                          alt={hero.alt}
+                          width="1200"
+                          height="750"
+                          class="h-full w-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </figure>
+                      <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                        {thumbs.map((img) => (
+                          <figure class="m-0 aspect-[4/3] overflow-hidden bg-[#e4d8c4]">
+                            <img
+                              src={img.src}
+                              alt={img.alt}
+                              width="600"
+                              height="600"
+                              class="h-full w-full object-cover"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </figure>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div class:list={[reverse && 'lg:order-1']}>
+                    <p class="seasonal-kicker">{block.season}</p>
+                    <h3 class="seasonal-display mt-2 text-2xl text-[#1a1714] md:text-3xl">{block.name}</h3>
+                    <p class="mt-2 text-sm text-[#9a6b2f]">{block.tagline}</p>
+                    <p class="mt-4 text-base leading-relaxed text-[#3f3a34]">{block.hook}</p>
+                    <p class="mt-3 text-sm text-[#6b6258]">{block.forWhom}</p>
+                    <ul class="mt-5 space-y-1.5 text-sm text-[#3f3a34]">
+                      {block.highlights.map((line) => (
+                        <li class="flex gap-2">
+                          <span class="text-[#9a6b2f]">—</span>
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                    <div class="mt-7">
+                      <button type="button" class="seasonal-btn-primary" data-ube-offer={block.quoteValue}>
+                        {block.quoteLabel}
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-[#e4d8c4] bg-[#fffdf8] py-12 md:py-14">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <p class="seasonal-kicker text-center">Factory</p>
+        <h2 class="seasonal-display mt-2 text-center text-2xl text-[#1a1714] md:text-3xl">Why the quote is factory-direct</h2>
+        <p class="mx-auto mt-3 max-w-2xl text-center leading-relaxed text-[#5c534a]">
+          SheerHerb in Xi’an. The certificate line is the homepage list, not a new claim for this powder.
+        </p>
+        <div class="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+          {
+            strengths.map(({ title, desc, icon }) => (
+              <div class="border border-[#e4d8c4] bg-[#f6f1e8]/80 px-4 py-4 sm:px-5 sm:py-5">
+                <span class="mb-3 inline-flex h-10 w-10 items-center justify-center bg-[#1a1714] text-[#f6f1e8]">
+                  <Icon name={icon} class="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3 class="text-base font-semibold text-[#1a1714]">{title}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-[#6b6258]">{desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-[#1a1714] py-12 text-[#f6f1e8] md:py-14">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <p class="text-xs uppercase tracking-[0.14em] text-[#d4b483]">How it works</p>
+        <h2 class="seasonal-display mt-2 text-2xl md:text-3xl">From a pack to a factory quote</h2>
+        <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            steps.map((step) => (
+              <div>
+                <p class="seasonal-display text-2xl text-[#d4b483]">{step.n}</p>
+                <h3 class="mt-2 text-lg font-medium">{step.title}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-[#c4b8a8]">{step.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-[#e4d8c4] bg-[#fffdf8] py-8">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-xs font-semibold uppercase tracking-[0.14em] text-[#9a6b2f]">Shipping named on the site</p>
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {
+            shipStrip.map(({ label, icon }) => (
+              <span class="inline-flex items-center gap-2 text-sm font-medium text-[#1a1714]">
+                <Icon name={icon} class="h-4 w-4 text-[#9a6b2f]" aria-hidden="true" />
+                {label}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-[#fffdf8] py-12 md:py-14">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="seasonal-kicker">Questions</p>
+        <h2 class="seasonal-display mt-2 text-2xl text-[#1a1714] md:text-3xl">Before you write us</h2>
+        <dl class="mt-8 divide-y divide-[#e4d8c4] border-y border-[#e4d8c4]">
+          {
+            faqs.map((item) => (
+              <div class="py-5">
+                <dt class="font-medium text-[#1a1714]">{item.q}</dt>
+                <dd class="mt-2 text-sm leading-relaxed text-[#5c534a]">{item.a}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <div class="mt-10 text-center">
+          <a href="#inquiry-form" class="seasonal-btn-primary">Get bag pricing</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="border-t border-[#e4d8c4] bg-[#fffdf8]">
+      <p class="mx-auto max-w-6xl px-4 py-6 text-xs text-[#6b6258] sm:px-6">
+        © {new Date().getFullYear()} Sheer Superfood · Xi’an, China
+      </p>
+    </footer>
+  </div>
+
+  <UbeLandingScript />
+</Layout>
+
+<style>
+  .seasonal-landing {
+    --aw-color-primary: #1a1714;
+    --aw-color-secondary: #3f3a34;
+    --aw-color-accent: #9a6b2f;
+  }
+  .seasonal-display {
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .seasonal-kicker {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #9a6b2f;
+  }
+  .seasonal-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1714;
+    color: #f6f1e8;
+    padding: 0.8rem 1.35rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: 1px solid #1a1714;
+  }
+  .seasonal-btn-primary:hover {
+    background: #3f3a34;
+  }
+  .seasonal-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #1a1714;
+    padding: 0.8rem 1.35rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border: 1px solid #c9b89a;
+  }
+  .seasonal-btn-ghost:hover {
+    border-color: #1a1714;
+  }
+  #seasonal-landing header .seasonal-btn-primary,
+  #seasonal-landing header .seasonal-btn-ghost {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  #seasonal-landing :global(#landing-inquiry-form > div) {
+    margin-top: 0;
+  }
+  @media (min-width: 640px) {
+    #seasonal-landing :global(#landing-inquiry-form > div:first-child) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: 0.75rem;
+      row-gap: 0.75rem;
+    }
+    #seasonal-landing :global(#landing-inquiry-form > div:first-child > *) {
+      margin-top: 0;
+    }
+    #seasonal-landing :global(#landing-inquiry-form > div:first-child > :nth-child(3)),
+    #seasonal-landing :global(#landing-inquiry-form > div:first-child > :nth-child(4)),
+    #seasonal-landing :global(#landing-inquiry-form > div:first-child > :nth-child(n + 7)) {
+      grid-column: 1 / -1;
+    }
+  }
+  #seasonal-landing :global(#landing-inquiry-form button[type='submit']) {
+    background: #1a1714 !important;
+    border-color: #1a1714 !important;
+    color: #f6f1e8 !important;
+    width: 100%;
+  }
+  #seasonal-landing article[data-picked] {
+    outline: 2px solid #9a6b2f;
+    outline-offset: 6px;
+  }
+</style>

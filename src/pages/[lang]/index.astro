@@ -1,0 +1,208 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import KeyFacts from '~/components/common/KeyFacts.astro';
+import HomeHero from '~/components/home/HomeHero.astro';
+import HomeHighlights from '~/components/home/HomeHighlights.astro';
+import { I18N_LOCALES, pagePath, type Locale } from '~/i18n/locales';
+import { categoryName, productTitle } from '~/i18n/titles';
+import { getUi } from '~/i18n/ui';
+import { getSiteUrl } from '~/utils/site-url';
+import { buildOrganizationSchema, ORGANIZATION_ID } from '~/utils/organization-schema';
+import products from '~/data/catalog/products.json';
+import categories from '~/data/catalog/categories.json';
+import pages from '~/data/catalog/pages.json';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+const siteUrl = getSiteUrl();
+const home = pages['/'];
+const homeBlocks = home?.blocks || [];
+const heroAlt: Record<Locale, string> = {
+  en: 'Smiling team in a bright nutrition studio',
+  zh: '明亮营养工作室里微笑的团队',
+  'zh-tw': '明亮營養工作室裡微笑的團隊',
+  es: 'Equipo sonriente en un estudio de nutrición luminoso',
+  pt: 'Equipe sorrindo em um estúdio de nutrição claro',
+  fr: 'Équipe souriante dans un studio nutrition lumineux',
+  de: 'Lächelndes Team in einem hellen Ernährungsstudio',
+  it: 'Team sorridente in uno studio nutrizionale luminoso',
+  ru: 'Улыбающаяся команда в светлой студии питания',
+  ja: '明るい栄養スタジオで微笑むチーム',
+  ko: '밝은 영양 스튜디오에서 미소 짓는 팀',
+  ar: 'فريق يبتسم في استوديو تغذية مضيء',
+  id: 'Tim tersenyum di studio nutrisi yang terang',
+  vi: 'Nhóm người mỉm cười trong studio dinh dưỡng sáng',
+};
+const sectionImages = (heading: string) => {
+  const start = homeBlocks.findIndex((block) => block.type === 'h2' && block.text?.includes(heading));
+  if (start < 0) return [];
+  const images: { src: string; alt?: string }[] = [];
+  for (const block of homeBlocks.slice(start + 1)) {
+    if (block.type === 'h2' || block.type === 'h3') break;
+    if (block.type === 'img' && block.src) images.push({ src: block.src, alt: block.alt });
+  }
+  return images;
+};
+const exhibitions = sectionImages('Industry Exhibitions');
+const reviews = sectionImages('Customer Reviews');
+const featuredSlugs = [
+  'lime-powder',
+  'tomato-powder',
+  'best-pea-protein-powder',
+  'matcha-powder',
+  'kale-powder',
+  'lions-mane-powder',
+  'freeze-dried-strawberry-powder',
+  'dried-fruit-chips',
+];
+const featured = featuredSlugs.flatMap((slug) => {
+  const product = products.find((item) => item.slug === slug);
+  return product ? [product] : [];
+});
+const topCategories = categories.filter((category) => !category.slug.includes('/'));
+const categoryCount = (slug: string) =>
+  products.filter((product) =>
+    product.categories.some((category) => category.slug === slug || category.slug.startsWith(`${slug}/`))
+  ).length;
+const facts = ui.facts.map((fact) => ({
+  label: fact.label,
+  text: fact.text,
+  href:
+    fact.link === 'oem'
+      ? pagePath('/services/', locale)
+      : fact.link === 'contact'
+        ? pagePath('/contact/#inquiry-form', locale)
+        : undefined,
+  linkText: fact.linkText || undefined,
+}));
+const quoteHref = pagePath('/contact/#inquiry-form', locale);
+const productsHref = pagePath('/products/', locale);
+const badges = ['fruit-powder', 'vegetable-powder', 'plant-based-protein'].map((slug) =>
+  categoryName(slug, locale)
+);
+
+const metadata = {
+  title: ui.metaHomeTitle,
+  description: ui.metaHomeDescription,
+  ignoreTitleTemplate: true,
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  name: 'Sheer Superfood',
+  url: `${siteUrl}${pagePath('/', locale)}`,
+  description: metadata.description,
+  inLanguage: locale,
+  publisher: { '@id': ORGANIZATION_ID },
+};
+---
+
+<Layout metadata={metadata}>
+  <HomeHero
+    image="/images/hero-health.jpg"
+    title={ui.homeTitle}
+    imageAlt={heroAlt[locale]}
+    lede={ui.homeLede}
+    kicker={`Sheer Superfood · ${ui.tagline}`}
+    badges={badges}
+    quoteText={ui.requestQuote}
+    quoteHref={quoteHref}
+    catalogText={ui.catalog}
+    catalogHref={productsHref}
+    oemText={ui.oem}
+    oemHref={pagePath('/services/', locale)}
+    linesLabel={ui.productLines}
+  />
+
+  <HomeHighlights
+    cards={[
+      ...ui.highlights.map((item) => ({ title: item.title, lines: item.lines })),
+      { title: ui.range, lines: ui.rangeLines },
+    ]}
+  />
+
+  <section class="not-prose py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-end justify-between gap-4 mb-8">
+        <h2 class="font-heading text-3xl font-semibold text-heading">{ui.productLines}</h2>
+        <a href={productsHref} class="text-sm text-link">{ui.allProducts}</a>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {
+          topCategories.map((category) => (
+            <a href={pagePath(category.path, locale)} class="border border-stone-200 bg-elevated p-5 hover:border-primary/40">
+              <h3 class="font-heading text-lg font-semibold text-heading">{categoryName(category.slug, locale)}</h3>
+              <p class="mt-2 text-sm text-muted">{ui.productCount(categoryCount(category.slug))}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="not-prose py-4 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <h2 class="font-heading text-3xl font-semibold text-heading mb-8">{ui.featured}</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {
+          featured.map((product) => (
+            <a href={pagePath(product.path, locale)} class="group border border-stone-200 bg-elevated overflow-hidden">
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt={productTitle(product.slug, product.title, locale)}
+                  class="aspect-square w-full bg-white object-contain p-3"
+                  loading="lazy"
+                />
+              )}
+              <span class="block p-3 font-medium text-heading group-hover:text-primary">
+                {productTitle(product.slug, product.title, locale)}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    exhibitions.length > 0 && (
+      <section class="not-prose py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 class="font-heading text-3xl font-semibold text-heading mb-8">{ui.exhibitions}</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {exhibitions.map((image) => (
+              <img src={image.src} alt={image.alt || ui.exhibitions} class="aspect-[4/3] w-full rounded-md bg-white object-cover" loading="lazy" />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    reviews.length > 0 && (
+      <section class="not-prose pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 class="font-heading text-3xl font-semibold text-heading mb-8">{ui.reviews}</h2>
+          <div class="grid sm:grid-cols-2 gap-4">
+            {reviews.map((image) => (
+              <img src={image.src} alt={image.alt || ui.reviews} class="w-full rounded-md bg-white object-contain" loading="lazy" />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <KeyFacts title={ui.keyFacts} eyebrow={ui.keyFacts} facts={facts} />
+
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(buildOrganizationSchema())} />
+</Layout>

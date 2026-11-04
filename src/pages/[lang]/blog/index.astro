@@ -1,0 +1,41 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { I18N_LOCALES, type Locale } from '~/i18n/locales';
+import { getUi } from '~/i18n/ui';
+import { fetchPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+const posts = await fetchPosts();
+const metadata = {
+  title: ui.blogTitle,
+  description: ui.metaBlogDescription,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">{ui.blogTitle}</h1>
+      <p class="text-muted mb-8">{ui.blogLede}</p>
+      <ul class="space-y-6">
+        {
+          posts.map((post) => (
+            <li class="border-b border-stone-200 pb-6">
+              <h2 class="font-heading text-2xl font-semibold text-heading">
+                <a href={getPermalink(post.permalink, 'post')} class="hover:text-primary">{post.title}</a>
+              </h2>
+              {post.excerpt && <p class="mt-2 text-sm text-muted">{post.excerpt}</p>}
+              <a href={getPermalink(post.permalink, 'post')} class="inline-block mt-3 text-sm text-link">{ui.readInEnglish}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Layout>

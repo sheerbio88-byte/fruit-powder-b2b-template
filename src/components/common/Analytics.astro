@@ -1,0 +1,38 @@
+---
+import { ANALYTICS } from 'astrowind:config';
+
+const id = ANALYTICS?.vendors?.googleAnalytics?.id ? String(ANALYTICS.vendors.googleAnalytics.id) : '';
+---
+
+{
+  /* Load GA after idle so it does not compete with LCP/FCP */
+  id && (
+    <script is:inline define:vars={{ gaId: id }}>
+      (function () {
+        if (!gaId || window.__gaDeferred) return;
+        window.__gaDeferred = true;
+        function loadGa() {
+          if (window.__gaLoaded) return;
+          window.__gaLoaded = true;
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            dataLayer.push(arguments);
+          };
+          window.gtag('js', new Date());
+          window.gtag('config', gaId);
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+          document.head.appendChild(s);
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadGa, { timeout: 4000 });
+        } else {
+          window.addEventListener('load', function () {
+            setTimeout(loadGa, 2000);
+          });
+        }
+      })();
+    </script>
+  )
+}

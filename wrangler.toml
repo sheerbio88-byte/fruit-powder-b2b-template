@@ -1,0 +1,19 @@
+# Cloudflare Workers static assets (not Pages).
+# dist/ is gitignored. `wrangler deploy` always runs [build] first so
+# ./dist (including hashed /_astro/* files) exists even when the dashboard
+# deploy command is only `npx wrangler deploy`.
+# Do not set pages_build_output_dir (that makes wrangler treat this as Pages).
+# Dashboard: Worker (not Pages), Framework None, Root = repo root (not dist).
+name = "fruit-powder-b2b-template"
+compatibility_date = "2026-09-17"
+main = "workers/router.js"
+
+[build]
+command = "npm run build"
+
+[assets]
+run_worker_first = true
+directory = "./dist"
+binding = "ASSETS"
+html_handling = "force-trailing-slash"
+not_found_handling = "404-page"

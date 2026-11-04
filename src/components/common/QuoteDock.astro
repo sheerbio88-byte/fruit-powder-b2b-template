@@ -1,0 +1,375 @@
+---
+import Form from '~/components/ui/Form.astro';
+import { getInquiryForm } from '~/i18n/forms';
+import { getLocaleFromPath, WHATSAPP_BY_LOCALE, type Locale } from '~/i18n/locales';
+import { getUi } from '~/i18n/ui';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+const ui = getUi(locale);
+const form = getInquiryForm(locale);
+const BACK_TOP: Record<Locale, string> = {
+  en: 'Back to top',
+  zh: '回到顶部',
+  'zh-tw': '回到頂部',
+  es: 'Volver arriba',
+  pt: 'Voltar ao topo',
+  fr: 'Haut de page',
+  de: 'Nach oben',
+  it: 'Torna su',
+  ru: 'Наверх',
+  ja: 'ページ上部へ',
+  ko: '맨 위로',
+  ar: 'إلى الأعلى',
+  id: 'Ke atas',
+  vi: 'Lên đầu trang',
+};
+---
+
+<div class="ssf-fab-stack" id="ssf-fab-stack">
+  <button class="ssf-fab ssf-fab-top" id="ssf-back-top" type="button" aria-label={BACK_TOP[locale]}>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 19V6M6 11l6-6 6 6"></path>
+    </svg>
+  </button>
+  <button class="ssf-fab ssf-fab-quote" type="button" data-open-quote aria-label={ui.quote}>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 6.5h16v11H4z"></path>
+      <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 7.5 12 13l8-5.5"></path>
+    </svg>
+  </button>
+</div>
+
+<dialog
+  class="ssf-quote-dialog"
+  id="ssf-quote-dialog"
+  aria-labelledby="ssf-quote-title"
+  data-quote-title={ui.quote}
+  data-quote-submit={form.button}
+  data-wa-title={form.waLead.title}
+  data-wa-sub={form.waLead.subtitle}
+  data-wa-submit={form.waLead.button}
+>
+  <div class="ssf-quote-head">
+    <div>
+      <p class="ssf-quote-title" id="ssf-quote-title">{ui.quote}</p>
+      <p class="ssf-quote-sub" id="ssf-quote-sub" hidden></p>
+    </div>
+    <button class="ssf-quote-x" type="button" data-close-quote aria-label={form.close}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"></path>
+      </svg>
+    </button>
+  </div>
+  <Form
+    formId="dock-inquiry"
+    compact
+    stickyActions
+    deferTurnstile
+    button={form.button}
+    inputs={form.inputs}
+    textarea={form.textarea}
+    disclaimer={form.disclaimer}
+    description={form.description}
+  />
+</dialog>
+
+<style is:global>
+  .ssf-fab-stack {
+    position: fixed;
+    z-index: 45;
+    right: 1.25rem;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .ssf-fab-stack.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ssf-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border: 1px solid var(--aw-color-border);
+    border-radius: 999px;
+    background: var(--aw-color-bg-elevated);
+    color: var(--aw-color-secondary);
+    box-shadow: 0 6px 16px rgba(28, 25, 23, 0.12);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  .dark .ssf-fab-top { color: var(--aw-color-primary); }
+  .ssf-fab-quote {
+    border-color: transparent;
+    background: var(--aw-color-accent);
+    color: #1c1917;
+    box-shadow: 0 8px 18px rgba(164, 93, 66, 0.28);
+  }
+  .ssf-fab-wa {
+    border-color: transparent;
+    background: #128c7e;
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(7, 94, 84, 0.28);
+  }
+  .ssf-fab-top {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .ssf-fab-top.is-on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .ssf-fab svg { width: 1.45rem; height: 1.45rem; display: block; }
+  .ssf-fab:hover { transform: scale(1.05); }
+  .ssf-fab-quote:hover { background: color-mix(in srgb, var(--aw-color-accent) 82%, #1c1917); }
+  .ssf-fab-wa:hover { background: #075e54; }
+  .ssf-fab:focus-visible { outline: 2px solid var(--aw-color-primary, #3f6f5b); outline-offset: 3px; }
+  html.ssf-quote-open,
+  html.ssf-quote-open body { overflow: hidden; overscroll-behavior: none; }
+  .ssf-quote-dialog:not([open]) { display: none; }
+  .ssf-quote-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    border: 0;
+    padding: 0;
+    margin: auto;
+    border-radius: 18px;
+    width: min(38rem, calc(100% - 1.5rem));
+    height: min(90dvh, 44rem);
+    max-height: min(90dvh, 44rem);
+    overflow: hidden;
+    background: #fff;
+    color: inherit;
+  }
+  .ssf-quote-dialog::backdrop { background: rgba(18, 28, 22, 0.48); }
+  .ssf-quote-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 0 0 auto;
+    padding: 0.85rem 0.85rem 0.7rem;
+    border-bottom: 1px solid #e7e5e4;
+    background: #fff;
+  }
+  .ssf-quote-title { margin: 0; font-size: 1.25rem; font-weight: 650; line-height: 1.2; }
+  .ssf-quote-sub { margin: 0.3rem 0 0; color: #57534e; font-size: 0.95rem; line-height: 1.45; }
+  .ssf-quote-x {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .ssf-quote-x svg { width: 1rem; height: 1rem; display: block; }
+  .ssf-quote-dialog form[data-inquiry-form] { flex: 1 1 auto; min-height: 0; }
+  .ssf-quote-chat {
+    flex: 0 0 auto;
+    margin: 0;
+    border-top: 1px solid #e7e5e4;
+    padding: 0.55rem 0.85rem calc(0.7rem + env(safe-area-inset-bottom));
+    text-align: center;
+    color: #57534e;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    background: #fff;
+  }
+  .ssf-quote-chat a { font-weight: 600; }
+  @media (min-width: 768px) {
+    .ssf-fab-stack { right: 1.5rem; bottom: 1.75rem; }
+    .ssf-fab { width: 3.5rem; height: 3.5rem; }
+    .ssf-fab svg { width: 1.65rem; height: 1.65rem; }
+  }
+  @media (max-width: 767px) {
+    .ssf-quote-dialog:modal {
+      width: 100%;
+      max-width: 100%;
+      height: min(92dvh, 44rem);
+      max-height: min(92dvh, 44rem);
+      margin: 0;
+      inset: auto 0 0 0;
+      border-radius: 18px 18px 0 0;
+    }
+  }
+</style>
+
+<script>
+  interface SsfWindow extends Window {
+    __ssfQuoteDock?: boolean;
+    __ssfPendingWa?: string;
+  }
+  const dockWindow = window as SsfWindow;
+  const stackOf = () => document.getElementById('ssf-fab-stack');
+  const dialogOf = () => document.getElementById('ssf-quote-dialog') as HTMLDialogElement | null;
+
+  const syncFab = () => {
+    const menu = document.getElementById('header')?.classList.contains('expanded');
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    stackOf()?.classList.toggle('is-hidden', Boolean(menu && mobile));
+    document.getElementById('ssf-back-top')?.classList.toggle('is-on', !menu && window.scrollY > 400);
+  };
+
+  let lockedY = 0;
+  const lockPage = () => {
+    lockedY = window.scrollY;
+    document.documentElement.classList.add('ssf-quote-open');
+    const body = document.body;
+    body.style.position = 'fixed';
+    body.style.top = `-${lockedY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+  };
+  const unlockPage = () => {
+    if (!document.documentElement.classList.contains('ssf-quote-open')) return;
+    document.documentElement.classList.remove('ssf-quote-open');
+    const body = document.body;
+    body.style.position = '';
+    body.style.top = '';
+    body.style.left = '';
+    body.style.right = '';
+    body.style.width = '';
+    const root = document.documentElement;
+    const prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: lockedY, left: 0, behavior: 'auto' });
+    root.style.scrollBehavior = prev;
+  };
+
+  const openQuote = (fromWa = false) => {
+    const dialog = dialogOf();
+    if (!dialog) return;
+    const titleEl = document.getElementById('ssf-quote-title');
+    const subEl = document.getElementById('ssf-quote-sub');
+    const submitEl = dialog.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (titleEl) titleEl.textContent = fromWa ? dialog.dataset.waTitle || '' : dialog.dataset.quoteTitle || '';
+    if (subEl) {
+      subEl.hidden = !fromWa;
+      subEl.textContent = fromWa ? dialog.dataset.waSub || '' : '';
+    }
+    if (submitEl && !submitEl.disabled) {
+      submitEl.textContent = fromWa ? dialog.dataset.waSubmit || '' : dialog.dataset.quoteSubmit || '';
+    }
+    const productInput = dialog.querySelector<HTMLInputElement>('input[name="product"]');
+    const heading = document.querySelector('article h1');
+    if (productInput && !productInput.value && heading?.textContent) {
+      productInput.value = heading.textContent.trim();
+    }
+    if (!dialog.open) lockPage();
+    dialog.showModal();
+    requestAnimationFrame(() => {
+      dialog.querySelector<HTMLElement>('form')?.dispatchEvent(new Event('ssf:render-turnstile'));
+    });
+    const first = dialog.querySelector<HTMLElement>('select, input:not([tabindex="-1"]), textarea');
+    first?.focus({ preventScroll: true });
+  };
+
+  const scrollerOf = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return null;
+    return target.closest('form[data-inquiry-form] > div');
+  };
+
+  const bindDialog = () => {
+    const dialog = dialogOf();
+    if (!dialog || dialog.dataset.dockBound === '1') return;
+    dialog.dataset.dockBound = '1';
+    dialog.addEventListener('close', unlockPage);
+    let downOnBackdrop = false;
+    const outsideDialogBox = (event) => {
+      if (!dialog || event.target !== dialog) return false;
+      const r = dialog.getBoundingClientRect();
+      return event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom;
+    };
+    dialog.addEventListener('pointerdown', (event) => {
+      downOnBackdrop = outsideDialogBox(event);
+    });
+    dialog.addEventListener('click', (event) => {
+      if (downOnBackdrop && outsideDialogBox(event)) dialog.close();
+      downOnBackdrop = false;
+    });
+    dialog.addEventListener(
+      'wheel',
+      (event) => {
+        const scroller = scrollerOf(event.target);
+        if (!scroller) {
+          event.preventDefault();
+          return;
+        }
+        const atTop = scroller.scrollTop <= 0 && event.deltaY < 0;
+        const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1 && event.deltaY > 0;
+        if (atTop || atBottom) event.preventDefault();
+      },
+      { passive: false }
+    );
+    let touchY = 0;
+    dialog.addEventListener(
+      'touchstart',
+      (event) => {
+        touchY = event.touches[0]?.clientY ?? 0;
+      },
+      { passive: true }
+    );
+    dialog.addEventListener(
+      'touchmove',
+      (event) => {
+        const scroller = scrollerOf(event.target);
+        const y = event.touches[0]?.clientY ?? touchY;
+        const dy = y - touchY;
+        if (!scroller) {
+          event.preventDefault();
+          return;
+        }
+        const atTop = scroller.scrollTop <= 0 && dy > 0;
+        const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1 && dy < 0;
+        if (atTop || atBottom) event.preventDefault();
+      },
+      { passive: false }
+    );
+  };
+
+  if (!dockWindow.__ssfQuoteDock) {
+    dockWindow.__ssfQuoteDock = true;
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest('[data-aw-toggle-menu]')) requestAnimationFrame(syncFab);
+      if (target.closest('[data-open-quote]')) {
+        event.preventDefault();
+        openQuote(false);
+        return;
+      }
+      if (target.closest('[data-close-quote]')) {
+        dialogOf()?.close();
+        return;
+      }
+      if (target.closest('#ssf-back-top')) {
+        if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    });
+    window.addEventListener('scroll', syncFab, { passive: true });
+    document.addEventListener('astro:page-load', () => {
+      bindDialog();
+      syncFab();
+    });
+  }
+
+  bindDialog();
+  syncFab();
+</script>

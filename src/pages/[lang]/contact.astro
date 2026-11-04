@@ -1,0 +1,48 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+import { getInquiryForm } from '~/i18n/forms';
+import { I18N_LOCALES, WHATSAPP_BY_LOCALE, type Locale } from '~/i18n/locales';
+import { getUi } from '~/i18n/ui';
+import { buildContactPageSchema } from '~/utils/organization-schema';
+import pages from '~/data/catalog/pages.json';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+const form = getInquiryForm(locale);
+
+
+const metadata = {
+  title: ui.contactTitle,
+  description: ui.metaContactDescription,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-6">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary mb-3">{ui.contactEyebrow}</p>
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">{ui.contactTitle}</h1>
+      <p class="text-muted">{ui.contactLede}</p>
+      <div class="mt-6 flex flex-wrap justify-center gap-6 text-sm">
+        <button type="button" data-open-quote class="text-link">Request a quote</button>
+      </div>
+      <p class="mt-4 text-sm text-muted">Room 1204, Vanke Huizhi Center, Yanta District, Xi'an City, Shaanxi, China</p>
+    </div>
+  </section>
+  <ContactUs
+    id="inquiry-form"
+    title={ui.inquiry}
+    subtitle={ui.inquiryHint}
+    button={form.button}
+    inputs={form.inputs}
+    textarea={form.textarea}
+    disclaimer={form.disclaimer}
+    description={form.description}
+  />
+  <script type="application/ld+json" set:html={JSON.stringify(buildContactPageSchema())} />
+</Layout>

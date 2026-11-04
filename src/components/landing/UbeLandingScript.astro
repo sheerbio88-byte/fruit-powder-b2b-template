@@ -1,0 +1,44 @@
+<script>
+  const root = document.querySelector('[data-ube-default]');
+  const fallback = root?.getAttribute('data-ube-default') || '';
+  const note = document.getElementById('ube-pick');
+  const field = () => document.querySelector<HTMLInputElement>('#inquiry-form input[name="product"]');
+
+  function applyOffer(value: string) {
+    const input = field();
+    if (input) input.value = value;
+    if (note) {
+      note.textContent = value ? `Selected: ${value}` : '';
+      note.hidden = !value;
+    }
+    document.querySelectorAll('[data-ube-offer]').forEach((button) => {
+      const picked = button.getAttribute('data-ube-offer') === value;
+      button.closest('article')?.toggleAttribute('data-picked', picked);
+      button.setAttribute('aria-pressed', picked ? 'true' : 'false');
+    });
+  }
+
+  if (fallback) applyOffer(fallback);
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const button = target.closest('[data-ube-offer]');
+    if (!button) return;
+    const value = button.getAttribute('data-ube-offer') || '';
+    applyOffer(value);
+    document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  const bar = document.getElementById('ube-mobile-bar');
+  const form = document.getElementById('inquiry-form');
+  if (bar && form && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        bar.classList.toggle('hidden', entry.isIntersecting);
+      },
+      { threshold: 0.12 },
+    );
+    observer.observe(form);
+  }
+</script>

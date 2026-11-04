@@ -1,0 +1,148 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+import { getInquiryForm } from '~/i18n/forms';
+import { I18N_LOCALES, pagePath, type Locale } from '~/i18n/locales';
+import { categoryName, productTitle, tagName } from '~/i18n/titles';
+import { getUi } from '~/i18n/ui';
+import { getSiteUrl } from '~/utils/site-url';
+import { buildProductSchema } from '~/utils/product-schema';
+import products from '~/data/catalog/products.json';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.flatMap((lang) =>
+    products.map((product) => ({
+      params: { lang, slug: product.slug },
+      props: { product },
+    }))
+  );
+}
+
+const locale = Astro.params.lang as Locale;
+const { product } = Astro.props;
+const ui = getUi(locale);
+const form = getInquiryForm(locale);
+const siteUrl = getSiteUrl();
+const title = productTitle(product.slug, product.title, locale);
+const path = pagePath(product.path, locale);
+const related = products
+  .filter(
+    (item) =>
+      item.slug !== product.slug &&
+      item.categories.some((category) => product.categories.some((own) => own.slug === category.slug))
+  )
+  .slice(0, 4);
+
+const metadata = {
+  title: ui.supplier(title),
+  description: ui.categoryMeta(title),
+  ignoreTitleTemplate: true,
+  openGraph: product.image ? { images: [{ url: product.image }] } : undefined,
+};
+
+const productSchema = buildProductSchema({
+  name: title,
+  description: ui.categoryMeta(title),
+  image: product.image,
+  url: `${siteUrl}${path}`,
+  category: product.categories[0] ? categoryName(product.categories[0].slug, locale) : undefined,
+});
+---
+
+<Layout metadata={metadata}>
+  <article class="pt-28 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10">
+      <div>
+        {
+          product.image && (
+            <img src={product.image} alt={product.imageAlt || title} class="w-full rounded-md bg-white object-contain" />
+          )
+        }
+      </div>
+      <div>
+        <p class="text-sm text-muted mb-3">
+          <a href={pagePath('/', locale)} class="text-link">{ui.home}</a>
+          <span aria-hidden="true"> / </span>
+          <a href={pagePath('/products/', locale)} class="text-link">{ui.products}</a>
+          {
+            product.categories[0] && (
+              <>
+                <span aria-hidden="true"> / </span>
+                <a href={pagePath(product.categories[0].path, locale)} class="text-link">
+                  {categoryName(product.categories[0].slug, locale)}
+                </a>
+              </>
+            )
+          }
+        </p>
+        <h1 class="font-heading text-4xl font-semibold text-heading mb-4">{title}</h1>
+        {
+          product.shortHtml && (
+            <>
+              <p class="text-sm text-muted mb-3">{ui.specNote}</p>
+              <div class="prose text-muted mb-6" set:html={product.shortHtml} />
+            </>
+          )
+        }
+        <p class="text-sm text-muted mb-6">
+          {
+            product.categories.map((category) => (
+              <a href={pagePath(category.path, locale)} class="text-link me-3">{categoryName(category.slug, locale)}</a>
+            ))
+          }
+          {
+            product.tags.map((tag) => (
+              <a href={pagePath(tag.path, locale)} class="text-link me-3">{tagName(tag.slug, tag.name, locale)}</a>
+            ))
+          }
+        </p>
+        <a href="#inquiry-form" class="btn btn-primary">{ui.requestQuote}</a>
+      </div>
+    </div>
+    {
+      product.bodyHtml && (
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 mt-12">
+          {!product.shortHtml && <p class="text-sm text-muted mb-4">{ui.specNote}</p>}
+          <div class="prose prose-headings:font-heading prose-headings:text-heading overflow-x-auto" set:html={product.bodyHtml} />
+        </div>
+      )
+    }
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="not-prose pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 class="font-heading text-2xl font-semibold text-heading mb-5">{ui.related}</h2>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {related.map((item) => (
+              <a href={pagePath(item.path, locale)} class="border border-stone-200 bg-elevated overflow-hidden">
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={productTitle(item.slug, item.title, locale)}
+                    class="aspect-square w-full bg-white object-contain p-3"
+                    loading="lazy"
+                  />
+                )}
+                <span class="block p-3 text-sm font-medium text-heading">{productTitle(item.slug, item.title, locale)}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <ContactUs
+    id="inquiry-form"
+    title={ui.inquiryAbout(title)}
+    subtitle={ui.inquirySub}
+    button={form.button}
+    inputs={form.inputs}
+    textarea={form.textarea}
+    disclaimer={form.disclaimer}
+    description={form.description}
+  />
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+</Layout>

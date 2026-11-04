@@ -1,0 +1,53 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Footer from '~/components/widgets/Footer.astro';
+import QuoteDock from '~/components/common/QuoteDock.astro';
+
+import { getHeaderFooter } from '~/i18n/nav';
+import { getLocaleFromPath } from '~/i18n/locales';
+
+import type { MetaData } from '~/types';
+
+export interface Props {
+  metadata?: MetaData;
+}
+
+const { metadata } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
+const {
+  header: hd,
+  footer: fd,
+  trustLeft,
+  trustRight,
+  homeHref,
+  blurb,
+  tagline,
+  ctaBandTitle,
+  ctaBandBody,
+  ctaBandButton,
+  quoteHref,
+} = getHeaderFooter(locale);
+---
+
+<Layout metadata={metadata}>
+  <slot name="header">
+    <Header {...hd} isSticky homeHref={homeHref} trustLeft={trustLeft} trustRight={trustRight} />
+  </slot>
+  <main>
+    <slot />
+  </main>
+  <slot name="footer">
+    <Footer
+      {...fd}
+      homeHref={homeHref}
+      blurb={blurb}
+      tagline={tagline}
+      ctaBandTitle={ctaBandTitle}
+      ctaBandBody={ctaBandBody}
+      ctaBandButton={ctaBandButton}
+      quoteHref={quoteHref}
+    />
+  </slot>
+  <QuoteDock />
+</Layout>

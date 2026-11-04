@@ -1,0 +1,623 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import FormContainer from '~/components/ui/Form.astro';
+import UbeLandingScript from '~/components/landing/UbeLandingScript.astro';
+import { Icon } from 'astro-icon/components';
+import { getInquiryForm } from '~/i18n/forms';
+
+const form = getInquiryForm('en');
+
+const metadata = {
+  title: 'Ube Powder Factory Direct | Bulk or Bags | Sheer Superfood',
+  description:
+    'Factory-direct ube powder (purple yam, 紫山药) in bulk or plain bags. SheerHerb in Xi’an. Send your volume for a quote. No published minimum order.',
+  ignoreTitleTemplate: true,
+  robots: { index: false, follow: true },
+  canonical: 'https://sheersuperfood.com/landing/fruit-powder-factory-direct-ads/',
+};
+
+
+const POWDER = '/images/landing/ube-powder.jpg';
+const BAG = '/images/landing/ube-powder-bag.jpg';
+const COURT = '/wp-content/uploads/2025/12/微信图片_20251209155736_15_21-scaled-e1765536153454.jpg';
+const BUILDING = '/wp-content/uploads/2025/12/微信图片_20251209163957_6_23.jpg';
+const EXTERIOR = '/wp-content/uploads/2025/12/车间.jpg';
+const LINE = '/wp-content/uploads/2025/12/微信图片_20251209163958_7_23-1.jpg';
+
+const trustBarItems = [
+  { label: 'Factory production', icon: 'tabler:building-factory-2' },
+  { label: 'R&D and QC', icon: 'tabler:microscope' },
+  { label: 'Bulk or bags', icon: 'tabler:package' },
+  { label: 'Homepage certs', icon: 'tabler:certificate' },
+  { label: 'Air and sea', icon: 'tabler:truck-delivery' },
+  { label: 'OEM on the form', icon: 'tabler:pencil' },
+];
+
+const heroBullets = [
+  'Purple yam powder, also called ube (紫山药)',
+  'Bulk for buyers who pack it, or the same powder in plain bags',
+  'Not purple sweet potato, and not the white yam powder in the catalog',
+];
+
+const bands = [
+  { volume: 'Sample only', benefit: 'Price and date come with the quote' },
+  { volume: 'Under 100 kg', benefit: 'A volume choice on the form' },
+  { volume: '100–500 kg', benefit: 'A volume choice on the form' },
+  { volume: '500–1,000 kg', benefit: 'A volume choice on the form' },
+  { volume: '1,000 kg+', benefit: 'A volume choice on the form' },
+];
+
+const strengths = [
+  {
+    title: 'Factory in Xi’an',
+    desc: 'SheerHerb integrates R&D, production, and sales of fruit and vegetable powders.',
+    icon: 'tabler:building-factory',
+  },
+  {
+    title: 'Two packs',
+    desc: 'Bulk powder, or the same powder in plain bags. Pick one and the form fills in.',
+    icon: 'tabler:packages',
+  },
+  {
+    title: 'Named workshops',
+    desc: 'The about page names the raw material workshop, R&D center, quality control center, and granulation workshop.',
+    icon: 'tabler:building',
+  },
+  {
+    title: 'Homepage certificates',
+    desc: 'HACCP, USDA Organic, ISO 9001, and Halal / Kosher. The company list, not a separate file for this powder.',
+    icon: 'tabler:shield-check',
+  },
+  {
+    title: 'Volume bands',
+    desc: 'Sample only through 1,000 kg+. No single minimum is published on this page.',
+    icon: 'tabler:scale',
+  },
+  {
+    title: 'OEM and private label',
+    desc: 'Both are choices on the form. The bag in the photo has no printed brand.',
+    icon: 'tabler:tag',
+  },
+  {
+    title: 'Air and sea',
+    desc: 'The site lists DHL, FedEx, and UPS, with air and sea freight.',
+    icon: 'tabler:plane',
+  },
+  {
+    title: 'Quote on the facts you send',
+    desc: 'Pack, volume, and bag size if you need bags. This page does not publish a unit price.',
+    icon: 'tabler:file-invoice',
+  },
+];
+
+const shipStrip = [
+  { title: 'DHL', icon: 'tabler:truck' },
+  { title: 'FedEx', icon: 'tabler:truck-delivery' },
+  { title: 'UPS', icon: 'tabler:package' },
+  { title: 'Air freight', icon: 'tabler:plane' },
+  { title: 'Sea freight', icon: 'tabler:ship' },
+];
+
+const packs = [
+  {
+    src: POWDER,
+    alt: 'Cut purple yam beside a bowl of purple ube powder',
+    title: 'Ube powder, bulk',
+    desc: 'Purple yam · 紫山药 · for buyers who pack it',
+    offer: 'Ube powder, bulk',
+    button: 'Quote bulk ube powder',
+  },
+  {
+    src: BAG,
+    alt: 'Plain purple pouch of ube powder next to a white bowl of the same powder',
+    title: 'Ube powder, bag packing',
+    desc: 'Same powder · plain pouch · no printed brand',
+    offer: 'Ube powder, bag packing',
+    button: 'Quote bag-packed ube powder',
+  },
+  {
+    src: BAG,
+    alt: 'Plain purple pouch that can take a private label',
+    title: 'Bag packing, private label',
+    desc: 'Same plain bag · logo and bag size in the message',
+    offer: 'Ube powder, bag packing, private label',
+    button: 'Quote private label',
+  },
+];
+
+const featureBlocks = [
+  {
+    src: POWDER,
+    alt: 'Cut purple yam beside a bowl of purple ube powder',
+    eyebrow: 'Bulk · purple yam',
+    title: 'Ube powder for buyers who pack it',
+    points: ['Purple tuber and purple powder', 'Specification goes on the form', 'No published bag weight on this offer'],
+    badge: 'Default on this page: bulk',
+    offer: 'Ube powder, bulk',
+    button: 'Request bulk',
+  },
+  {
+    src: BAG,
+    alt: 'Plain purple pouch of ube powder next to a white bowl of the same powder',
+    eyebrow: 'Bags · unlabeled',
+    title: 'The same powder in plain bags',
+    points: ['No brand printed on the pouch', 'Write the bag size in the message', 'Private label is a separate choice'],
+    badge: 'Plain bag, not a printed brand',
+    offer: 'Ube powder, bag packing',
+    button: 'Request bags',
+  },
+  {
+    src: LINE,
+    alt: 'Stainless processing line at the Xi’an plant',
+    eyebrow: 'Xi’an plant',
+    title: 'R&D, production, and sales in one company',
+    points: [
+      'Raw material workshop, R&D center, quality control center, granulation workshop',
+      'Photos on this page are the about-page photos',
+      'Drying method for this powder is confirmed with the quote',
+    ],
+    badge: 'Plant photos, not a product video',
+    offer: '',
+    button: 'Ask the factory',
+  },
+];
+
+const plantShots = [
+  { src: COURT, alt: 'Courtyard at the Xi’an plant' },
+  { src: BUILDING, alt: 'Plant building' },
+  { src: EXTERIOR, alt: 'Plant exterior' },
+  { src: LINE, alt: 'Stainless processing line' },
+];
+
+const processSteps = [
+  { title: 'Inquiry', desc: 'Pick bulk or bags', icon: 'tabler:message' },
+  { title: 'Quote', desc: 'Factory cost for that volume', icon: 'tabler:file-invoice' },
+  { title: 'Sample', desc: 'A form choice, not a date on this page', icon: 'tabler:package' },
+  { title: 'Confirm', desc: 'Spec and bag size, if you need bags', icon: 'tabler:checklist' },
+  { title: 'Ship', desc: 'Air or sea from Xi’an', icon: 'tabler:truck-delivery' },
+];
+
+const serviceStrip = [
+  { title: 'One factory', icon: 'tabler:building-factory' },
+  { title: 'Bulk or bags', icon: 'tabler:package' },
+  { title: 'Air and sea', icon: 'tabler:plane' },
+  { title: 'OEM on the form', icon: 'tabler:tools' },
+  { title: 'WhatsApp sales', icon: 'tabler:brand-whatsapp' },
+];
+
+const faqs = [
+  {
+    q: 'Is this purple sweet potato?',
+    a: 'No. This offer is purple yam, also called ube (紫山药). Purple sweet potato powder is a different plant, and the white yam powder in the catalog is a different product.',
+  },
+  {
+    q: 'Can I buy bulk and bags?',
+    a: 'Yes. Bulk is the powder for buyers who pack it. Bag packing is the same powder in plain bags. Pick one above and the product field fills in. Write the bag size in the message. This page does not publish one bag weight.',
+  },
+  {
+    q: 'What is the minimum order?',
+    a: 'The site does not publish one minimum. The form lists sample only, under 100 kg, 100–500 kg, 500–1,000 kg, and 1,000 kg+.',
+  },
+  {
+    q: 'Can you do private label or OEM?',
+    a: 'The form includes private label branding and custom OEM. The bag in the photo has no printed brand.',
+  },
+  {
+    q: 'Which drying method is this powder?',
+    a: 'The site publishes spray drying and vacuum freeze-drying for its fruit and vegetable powders. The method for this ube powder is confirmed with the quote.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <div class="factory-landing font-sans text-default" data-ube-default="Ube powder, bulk">
+    <div class="border-b border-accent/20 bg-accent/10 px-4 py-2 text-center text-sm leading-snug text-default">
+      <strong class="text-accent">Factory direct · Xi’an</strong> — Ube powder, purple yam, 紫山药 · bulk or plain bags
+    </div>
+
+    <div class="border-b border-white/10 bg-gradient-to-b from-slate-800 to-slate-900 text-slate-200" role="complementary" aria-label="Trust signals">
+      <div class="mx-auto max-w-7xl px-4 py-2.5 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium uppercase tracking-wide sm:gap-x-7 sm:text-sm">
+          {
+            trustBarItems.map(({ label, icon }) => (
+              <span class="inline-flex items-center gap-1.5">
+                <Icon name={icon} class="h-3 w-3 shrink-0 text-accent" aria-hidden="true" />
+                {label}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <section class="bg-gradient-to-b from-[#f6e7e0] via-white to-white py-8 md:py-10">
+      <div class="mx-auto grid max-w-7xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:px-8">
+        <div>
+          <img
+            src="/wp-content/uploads/2025/12/cropped-cropped-logo03-e1765874141220.png"
+            alt="Sheer Superfood"
+            width="162"
+            height="54"
+            class="mb-4 h-8 w-auto"
+          />
+          <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent">
+            <Icon name="tabler:building-factory-2" class="h-3.5 w-3.5" aria-hidden="true" />
+            Factory supply
+          </div>
+          <p class="mb-2 text-sm font-semibold tracking-wide text-accent">PURPLE YAM · UBE POWDER · 紫山药</p>
+          <h1 class="mb-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
+            Ube powder, bulk or in bags<br />
+            <span class="text-accent">From the Xi’an factory</span>
+          </h1>
+          <p class="mb-4 max-w-xl text-base leading-relaxed text-muted">
+            Choose bulk powder or the same powder in plain bags, then send the volume. This page does not publish a unit
+            price or a minimum order.
+          </p>
+          <ul class="mb-5 space-y-2">
+            {
+              heroBullets.map((item) => (
+                <li class="flex gap-2 text-sm text-default">
+                  <Icon name="tabler:circle-check-filled" class="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="mb-3 flex flex-wrap gap-3">
+            <a href="#inquiry-form" class="btn-primary">Get a factory quote</a>
+            <button type="button" data-open-quote class="btn-secondary">Get a quote</button>
+          </div>
+        </div>
+
+        <div class="grid gap-3">
+          <figure class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md">
+            <img
+              src={POWDER}
+              alt="Cut purple yam beside a bowl of purple ube powder"
+              width="1024"
+              height="768"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="aspect-[4/3] w-full object-cover"
+            />
+          </figure>
+          <div class="grid grid-cols-2 gap-3">
+            <figure class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+              <img
+                src={BAG}
+                alt="Plain purple pouch of ube powder next to a white bowl of the same powder"
+                width="640"
+                height="480"
+                loading="eager"
+                decoding="async"
+                class="aspect-[4/3] w-full object-cover"
+              />
+            </figure>
+            <figure class="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+              <img
+                src={LINE}
+                alt="Stainless processing line at the Xi’an plant"
+                width="640"
+                height="480"
+                loading="eager"
+                decoding="async"
+                class="aspect-[4/3] w-full object-cover"
+              />
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-gray-200 bg-slate-50 py-12 md:py-14">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 text-center">
+          <h2 class="mb-2 text-2xl font-bold md:text-3xl">Our strengths</h2>
+          <p class="text-muted">Why this quote comes from the Xi’an factory, not a trading desk</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+          {
+            strengths.map(({ title, desc, icon }) => (
+              <div class="rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm sm:p-5 sm:text-left">
+                <span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                  <Icon name={icon} class="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3 class="mb-1 text-base font-semibold">{title}</h3>
+                <p class="text-sm leading-relaxed text-muted">{desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 md:py-14">
+      <div class="mx-auto grid max-w-7xl items-start gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-8">
+        <div class="order-2 lg:order-1">
+          <p class="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">Factory quote</p>
+          <h2 class="mb-4 text-2xl font-bold sm:text-3xl">Volume bands on the form</h2>
+          <p class="mb-6 leading-relaxed text-muted">
+            These are the choices in the volume field. They are not a price list, and this page does not publish a
+            minimum order.
+          </p>
+          <div class="mb-6 space-y-2.5 rounded-xl border border-gray-200 bg-slate-50 p-4 sm:p-5">
+            {
+              bands.map(({ volume, benefit }) => (
+                <div class="flex items-center justify-between gap-3 text-sm">
+                  <span class="font-medium text-default">{volume}</span>
+                  <span class="shrink-0 text-right text-sm font-semibold text-accent">{benefit}</span>
+                </div>
+              ))
+            }
+          </div>
+          <button type="button" data-open-quote class="btn-secondary">Request a quote</button>
+        </div>
+
+        <div id="inquiry-form" class="order-1 scroll-mt-8 lg:order-2">
+          <div class="w-full rounded-2xl border-2 border-accent/30 bg-white p-5 shadow-xl sm:p-6">
+            <div class="mb-4 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
+              BULK IS FILLED IN
+            </div>
+            <h3 class="mb-1 text-xl font-bold">Get your factory quote</h3>
+            <p class="mb-4 text-sm text-muted">Sheer Superfood — ube powder, bulk or plain bags, from Xi’an.</p>
+            <p id="ube-pick" hidden class="mb-4 rounded-md bg-accent/10 px-3 py-2 text-sm font-medium text-accent"></p>
+            <FormContainer
+              formId="landing-inquiry"
+              compact
+              inputs={form.inputs}
+              textarea={{ ...form.textarea, rows: 2 }}
+              disclaimer={form.disclaimer}
+              button="Send the factory quote"
+              description={form.description}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-gray-200 bg-page py-6">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p class="mb-4 text-center text-xs font-semibold uppercase tracking-widest text-muted">Shipping named on the site</p>
+        <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {
+            shipStrip.map(({ title, icon }) => (
+              <span class="inline-flex items-center gap-2 text-sm font-medium text-default">
+                <Icon name={icon} class="h-4 w-4 text-accent" aria-hidden="true" />
+                {title}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 md:py-14">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+          <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-accent">This powder, three ways to ask</p>
+          <h2 class="mb-2 text-2xl font-bold md:text-3xl">Bulk, bags, or a private-label bag</h2>
+          <p class="text-muted">One ingredient. The button writes the pack into the product field.</p>
+        </div>
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            packs.map((product) => (
+              <article class="overflow-hidden rounded-2xl border border-gray-200 bg-white transition-shadow hover:shadow-md">
+                <div class="relative aspect-[4/3] bg-slate-50">
+                  <img
+                    src={product.src}
+                    alt={product.alt}
+                    width="1024"
+                    height="1024"
+                    loading="lazy"
+                    decoding="async"
+                    class="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+                <div class="border-t border-gray-100 p-4">
+                  <h3 class="mb-1 text-base font-bold leading-snug">{product.title}</h3>
+                  <p class="text-sm text-muted">{product.desc}</p>
+                  <button type="button" class="btn-primary mt-4 w-full !whitespace-normal" data-ube-offer={product.offer}>
+                    {product.button}
+                  </button>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 py-12 md:py-14">
+      <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <div class="mb-4 text-center">
+          <h2 class="mb-2 text-2xl font-bold md:text-3xl">Bulk, bags, and the plant</h2>
+          <p class="text-muted">The photos we have for this offer. No extra product line is invented here.</p>
+        </div>
+        {
+          featureBlocks.map((block, i) => (
+            <article
+              class:list={[
+                'grid overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:grid-cols-2',
+                i % 2 === 1 && 'md:[&>*:first-child]:order-2',
+              ]}
+            >
+              <div class="relative aspect-[4/3] bg-slate-100">
+                <img
+                  src={block.src}
+                  alt={block.alt}
+                  width="1024"
+                  height="768"
+                  loading="lazy"
+                  decoding="async"
+                  class="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+              <div class="flex flex-col justify-center p-6 sm:p-8 md:p-10">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-accent">{block.eyebrow}</p>
+                <h3 class="mb-4 text-xl font-bold leading-snug sm:text-2xl">{block.title}</h3>
+                <ul class="mb-5 space-y-2">
+                  {block.points.map((point) => (
+                    <li class="flex gap-2 text-sm text-default">
+                      <Icon name="tabler:check" class="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+                <span class="mb-6 inline-flex self-start rounded-full bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent">
+                  {block.badge}
+                </span>
+                {
+                  block.offer ? (
+                    <button type="button" class="btn-primary self-start !whitespace-normal" data-ube-offer={block.offer}>
+                      {block.button}
+                    </button>
+                  ) : (
+                    <a href="#inquiry-form" class="btn-primary self-start">
+                      {block.button}
+                    </a>
+                  )
+                }
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="py-12 md:py-14">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          <figure class="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+            <img
+              src={COURT}
+              alt="Courtyard at the Xi’an plant"
+              width="1200"
+              height="800"
+              loading="lazy"
+              decoding="async"
+              class="aspect-video h-auto w-full object-cover"
+            />
+          </figure>
+          <div>
+            <p class="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">Plant photos</p>
+            <h2 class="mb-4 text-2xl font-bold md:text-3xl">The Xi’an plant, as published</h2>
+            <p class="mb-6 leading-relaxed text-muted">
+              These are the about-page photos: courtyard, plant building, exterior, and a stainless processing line.
+              Captions stay neutral. One building is signed as an R&D block; the about heading for that photo says raw
+              material workshop.
+            </p>
+            <ul class="mb-8 space-y-3">
+              {
+                ['Courtyard, plant building, exterior, processing line', 'Homepage certificate line stays the company list', 'Drying method for this ube powder is confirmed with the quote'].map(
+                  (item) => (
+                    <li class="flex gap-3 text-sm text-default">
+                      <Icon name="tabler:circle-check-filled" class="h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ),
+                )
+              }
+            </ul>
+            <a href="#inquiry-form" class="btn-primary">Discuss the quote</a>
+          </div>
+        </div>
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            plantShots.map(({ src, alt }) => (
+              <figure class="aspect-[4/3] overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                <img src={src} alt={alt} width="800" height="600" loading="lazy" decoding="async" class="h-full w-full object-cover" />
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-gray-200 bg-gradient-to-b from-[#f6e7e0] to-white py-12 md:py-14">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 text-center">
+          <h2 class="mb-2 text-2xl font-bold md:text-3xl">From inquiry to shipment</h2>
+          <p class="text-muted">Five steps. Sample timing is part of the quote, not a promise on this page.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {
+            processSteps.map(({ title, desc, icon }, i) => (
+              <div class="rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm">
+                <div class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent">
+                  <Icon name={icon} class="h-5 w-5" aria-hidden="true" />
+                </div>
+                <p class="mb-1 text-xs font-bold text-accent">0{i + 1}</p>
+                <h3 class="mb-1 text-sm font-semibold">{title}</h3>
+                <p class="text-sm leading-snug text-muted">{desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-accent py-8 text-white">
+      <div class="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 sm:grid-cols-3 sm:gap-6 sm:px-6 lg:grid-cols-5 lg:px-8">
+        {
+          serviceStrip.map(({ title, icon }) => (
+            <div class="flex flex-col items-center gap-2 py-2 text-center">
+              <Icon name={icon} class="h-7 w-7 opacity-95" aria-hidden="true" />
+              <span class="text-sm font-semibold">{title}</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="py-12 md:py-14">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <h2 class="mb-6 text-2xl font-bold md:text-3xl">Questions</h2>
+        <dl class="divide-y divide-gray-200 border-y border-gray-200">
+          {
+            faqs.map((item) => (
+              <div class="py-5">
+                <dt class="font-semibold text-default">{item.q}</dt>
+                <dd class="mt-2 text-sm leading-relaxed text-muted">{item.a}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <footer class="border-t border-gray-200">
+      <p class="mx-auto max-w-7xl px-4 py-6 text-xs text-muted sm:px-6 lg:px-8">
+        © {new Date().getFullYear()} Sheer Superfood · Xi’an, China
+      </p>
+    </footer>
+  </div>
+
+  <UbeLandingScript />
+</Layout>
+
+<style>
+  .factory-landing article[data-picked] {
+    outline: 2px solid #c4785a;
+    outline-offset: 2px;
+  }
+  .factory-landing :global(#landing-inquiry-form > div) {
+    margin-top: 0;
+  }
+  @media (min-width: 640px) {
+    .factory-landing :global(#landing-inquiry-form > div:first-child) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: 0.75rem;
+      row-gap: 0.75rem;
+    }
+    .factory-landing :global(#landing-inquiry-form > div:first-child > *) {
+      margin-top: 0;
+    }
+    .factory-landing :global(#landing-inquiry-form > div:first-child > :nth-child(3)),
+    .factory-landing :global(#landing-inquiry-form > div:first-child > :nth-child(4)),
+    .factory-landing :global(#landing-inquiry-form > div:first-child > :nth-child(n + 7)) {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

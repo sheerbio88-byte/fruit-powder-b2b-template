@@ -1,0 +1,35 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Privacy Policy | Sheer Superfood',
+  description: 'How Sheer Superfood uses inquiry form details to reply to quote requests.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <h1 class="font-heading text-4xl font-semibold text-heading">Privacy Policy</h1>
+    </div>
+  </section>
+  <section class="pb-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-4 text-muted leading-relaxed">
+      <p>
+        The original privacy policy text was not in the local site files. This page states how this rebuilt site handles the inquiry form.
+      </p>
+      <h2 class="font-heading text-2xl font-semibold text-heading pt-2">What the form collects</h2>
+      <p>
+        The quote form asks for buyer type, what you are looking for, order quantity, product, name, email, and message. The submission also includes a Cloudflare Turnstile check and the site name sheersuperfood.com, so the inquiry can be kept separate from other brands that share the same inbox.
+      </p>
+      <h2 class="font-heading text-2xl font-semibold text-heading pt-2">How it is used</h2>
+      <p>
+        We use those details to reply to the quote by email or We do not sell the form contents.
+      </p>
+      <p>
+        Questions about a submission: use the <a class="text-link" href="/contact/#inquiry-form">inquiry form</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

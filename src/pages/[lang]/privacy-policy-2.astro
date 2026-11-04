@@ -1,0 +1,29 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { I18N_LOCALES, type Locale } from '~/i18n/locales';
+import { getUi } from '~/i18n/ui';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+const metadata = {
+  title: ui.privacyTitle,
+  description: ui.metaPrivacyDescription,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-4 text-muted leading-relaxed">
+      <h1 class="font-heading text-4xl font-semibold text-heading">{ui.privacyTitle}</h1>
+      <p>{ui.privacyIntro}</p>
+      <h2 class="font-heading text-2xl font-semibold text-heading pt-2">{ui.privacyCollectTitle}</h2>
+      <p>{ui.privacyCollect}</p>
+      <h2 class="font-heading text-2xl font-semibold text-heading pt-2">{ui.privacyUseTitle}</h2>
+      <p>{ui.privacyUse}</p>
+    </div>
+  </section>
+</Layout>

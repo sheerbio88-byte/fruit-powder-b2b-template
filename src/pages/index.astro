@@ -1,0 +1,178 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import KeyFacts from '~/components/common/KeyFacts.astro';
+import HomeHero from '~/components/home/HomeHero.astro';
+import HomeHighlights from '~/components/home/HomeHighlights.astro';
+import { KEY_FACTS } from '~/data/key-facts';
+import { getSiteUrl } from '~/utils/site-url';
+import { buildOrganizationSchema, ORGANIZATION_ID } from '~/utils/organization-schema';
+import products from '~/data/catalog/products.json';
+import categories from '~/data/catalog/categories.json';
+import pages from '~/data/catalog/pages.json';
+
+const siteUrl = getSiteUrl();
+const home = pages['/'];
+const homeBlocks = home?.blocks || [];
+const lede =
+  'SheerHerb is a modern high-tech enterprise integrating R&D, production, and sales of fruit and vegetable powders.';
+const sectionImages = (heading: string) => {
+  const start = homeBlocks.findIndex((block) => block.type === 'h2' && block.text?.includes(heading));
+  if (start < 0) return [];
+  const images: { src: string; alt?: string }[] = [];
+  for (const block of homeBlocks.slice(start + 1)) {
+    if (block.type === 'h2' || block.type === 'h3') break;
+    if (block.type === 'img' && block.src) images.push({ src: block.src, alt: block.alt });
+  }
+  return images;
+};
+const exhibitionTitle =
+  homeBlocks.find((block) => block.type === 'h2' && block.text?.includes('Industry Exhibitions'))?.text ||
+  'Industry Exhibitions';
+const reviewTitle =
+  homeBlocks.find((block) => block.type === 'h2' && block.text?.includes('Customer Reviews'))?.text ||
+  'Customer Reviews';
+const exhibitions = sectionImages('Industry Exhibitions');
+const reviews = sectionImages('Customer Reviews');
+const highlightLabels = ['high quality', 'fast delivery', 'certificate'];
+const highlights = homeBlocks.flatMap((block, index) => {
+  if (block.type !== 'h4' || !block.text) return [];
+  const label = block.text.replace(/^⭐\s*/, '').trim();
+  if (!highlightLabels.some((name) => label.toLowerCase().includes(name))) return [];
+  const next = homeBlocks[index + 1];
+  const lines = (next?.type === 'p' ? next.text || '' : '')
+    .split(/\s*\*\s*/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return [{ label, lines }];
+});
+const range = homeBlocks.filter((block) => block.type === 'h5' && block.text).map((block) => block.text as string);
+const featuredSlugs = [
+  'lime-powder',
+  'tomato-powder',
+  'best-pea-protein-powder',
+  'matcha-powder',
+  'kale-powder',
+  'lions-mane-powder',
+  'freeze-dried-strawberry-powder',
+  'dried-fruit-chips',
+];
+const featured = featuredSlugs.flatMap((slug) => {
+  const product = products.find((item) => item.slug === slug);
+  return product ? [product] : [];
+});
+const topCategories = categories.filter((category) => !category.slug.includes('/'));
+const categoryCount = (slug: string) =>
+  products.filter((product) =>
+    product.categories.some((category) => category.slug === slug || category.slug.startsWith(`${slug}/`))
+  ).length;
+
+const metadata = {
+  title: home?.seoTitle || 'Fruit & Vegetable Powder Supplier | Sheer Superfood',
+  description:
+    home?.description ||
+    'Fruit powders, vegetable powders, plant protein, and instant tea powder for food, beverage, and supplement brands.',
+  ignoreTitleTemplate: true,
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  name: 'Sheer Superfood',
+  url: `${siteUrl}/`,
+  description: metadata.description,
+  publisher: { '@id': ORGANIZATION_ID },
+};
+---
+
+<Layout metadata={metadata}>
+  <HomeHero
+    image="/images/hero-health.jpg"
+    title="Fruit and vegetable powders for food and supplement brands"
+    imageAlt="Smiling team in a bright nutrition studio"
+    lede={lede || 'Bulk fruit powder, vegetable powder, plant protein, and instant tea powder. OEM programs on request.'}
+  />
+
+  {
+    (highlights.length > 0 || range.length > 0) && (
+      <HomeHighlights
+        cards={[
+          ...highlights.map((item) => ({ title: item.label, lines: item.lines })),
+          ...(range.length > 0 ? [{ title: 'Range', lines: range }] : []),
+        ]}
+      />
+    )
+  }
+
+  <section class="not-prose py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-end justify-between gap-4 mb-8">
+        <h2 class="font-heading text-3xl font-semibold text-heading">Product lines</h2>
+        <a href="/products/" class="text-sm text-link">All products</a>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {
+          topCategories.map((category) => (
+            <a href={category.path} class="border border-stone-200 bg-elevated p-5 hover:border-primary/40">
+              <h3 class="font-heading text-lg font-semibold text-heading">{category.name}</h3>
+              <p class="mt-2 text-sm text-muted">{categoryCount(category.slug) === 1 ? '1 product' : `${categoryCount(category.slug)} products`}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="not-prose py-4 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <h2 class="font-heading text-3xl font-semibold text-heading mb-8">Featured products</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {
+          featured.map((product) => (
+            <a href={product.path} class="group border border-stone-200 bg-elevated overflow-hidden">
+              {product.image && (
+                <img src={product.image} alt={product.imageAlt || product.title} class="aspect-square w-full bg-white object-contain p-3" loading="lazy" />
+              )}
+              <span class="block p-3 font-medium text-heading group-hover:text-primary">{product.title}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    exhibitions.length > 0 && (
+      <section class="not-prose py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 class="font-heading text-3xl font-semibold text-heading mb-8">{exhibitionTitle}</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {exhibitions.map((image) => (
+              <img src={image.src} alt={image.alt || 'Industry exhibition'} class="aspect-[4/3] w-full rounded-md bg-white object-cover" loading="lazy" />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    reviews.length > 0 && (
+      <section class="not-prose pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 class="font-heading text-3xl font-semibold text-heading mb-8">{reviewTitle}</h2>
+          <div class="grid sm:grid-cols-2 gap-4">
+            {reviews.map((image) => (
+              <img src={image.src} alt={image.alt || 'Customer review'} class="w-full rounded-md bg-white object-contain" loading="lazy" />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <KeyFacts title="Key facts" facts={KEY_FACTS} />
+
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(buildOrganizationSchema())} />
+</Layout>

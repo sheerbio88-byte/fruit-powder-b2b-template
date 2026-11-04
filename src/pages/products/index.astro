@@ -1,0 +1,52 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import products from '~/data/catalog/products.json';
+import categories from '~/data/catalog/categories.json';
+import pages from '~/data/catalog/pages.json';
+
+const page = pages['/products/'];
+const groups = categories
+  .filter((category) => !category.slug.includes('/'))
+  .map((category) => ({
+    category,
+    products: products.filter((product) =>
+      product.categories.some((item) => item.slug === category.slug || item.slug.startsWith(`${category.slug}/`))
+    ),
+  }))
+  .filter((group) => group.products.length);
+
+const metadata = {
+  title: page?.seoTitle || 'Products',
+  description: page?.description || 'Fruit powder, vegetable powder, plant protein, and instant tea powder catalog.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <p class="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary mb-3">Catalog</p>
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">Products</h1>
+      <p class="max-w-2xl text-muted">{metadata.description}</p>
+    </div>
+  </section>
+  {
+    groups.map((group) => (
+      <section class="not-prose pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="flex items-end justify-between mb-5">
+            <h2 class="font-heading text-2xl font-semibold text-heading">{group.category.name}</h2>
+            <a href={group.category.path} class="text-sm text-link">View category</a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {group.products.map((product) => (
+              <a href={product.path} class="border border-stone-200 bg-elevated overflow-hidden hover:border-primary/40">
+                {product.image && <img src={product.image} alt={product.imageAlt || product.title} class="aspect-square w-full bg-white object-contain p-3" loading="lazy" />}
+                <span class="block p-3 text-sm font-medium text-heading">{product.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</Layout>

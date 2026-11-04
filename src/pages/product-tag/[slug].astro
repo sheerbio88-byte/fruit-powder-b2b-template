@@ -1,0 +1,39 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import tags from '~/data/catalog/tags.json';
+import products from '~/data/catalog/products.json';
+
+export function getStaticPaths() {
+  return tags.map((tag) => ({
+    params: { slug: tag.slug },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const items = products.filter((product) => product.tags.some((item) => item.slug === tag.slug));
+const metadata = {
+  title: tag.seoTitle || tag.name,
+  description: tag.description || `${tag.name} products.`,
+  ignoreTitleTemplate: Boolean(tag.seoTitle),
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">{tag.name}</h1>
+      {tag.description && <p class="max-w-2xl text-muted mb-8">{tag.description}</p>}
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {
+          items.map((product) => (
+            <a href={product.path} class="border border-stone-200 bg-elevated overflow-hidden">
+              {product.image && <img src={product.image} alt={product.title} class="aspect-square w-full bg-white object-contain p-3" loading="lazy" />}
+              <span class="block p-3 text-sm font-medium text-heading">{product.title}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

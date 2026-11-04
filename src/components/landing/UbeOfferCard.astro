@@ -1,0 +1,29 @@
+---
+interface Props {
+  image: string;
+  alt: string;
+  title: string;
+  text: string;
+  offer: string;
+  button: string;
+  flag?: string;
+  detail?: string;
+}
+
+const { image, alt, title, text, offer, button, flag, detail } = Astro.props;
+---
+
+<article
+  class="flex h-full flex-col overflow-hidden rounded-xl border border-stone-200/90 bg-elevated ring-2 ring-transparent data-[picked]:ring-primary"
+>
+  <img src={image} alt={alt} width="1024" height="1024" class="h-56 w-full bg-[#f7f3ec] object-contain" />
+  <div class="flex flex-1 flex-col p-5 sm:p-6">
+    {flag ? <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">{flag}</p> : null}
+    <h2 class="mt-1 font-heading text-xl font-semibold text-heading">{title}</h2>
+    <p class="mt-2 flex-1 text-sm leading-relaxed text-muted">{text}</p>
+    {detail ? <p class="mt-3 text-sm font-semibold text-heading">{detail}</p> : null}
+    <button type="button" class="btn-primary mt-5 w-full !whitespace-normal" data-ube-offer={offer} aria-pressed="false">
+      {button}
+    </button>
+  </div>
+</article>

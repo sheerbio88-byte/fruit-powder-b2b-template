@@ -1,0 +1,33 @@
+---
+import { getBlogPostCtaTarget } from '~/utils/blog-canonical-seo';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const target = getBlogPostCtaTarget(slug);
+---
+
+<section class="not-prose mx-auto max-w-3xl px-6 pb-8">
+  <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-soft dark:bg-slate-900 p-6 md:p-8 text-center">
+    <h2 class="text-xl md:text-2xl font-bold font-heading mb-3">Need this ingredient?</h2>
+    <p class="text-muted mb-6">
+      Send the powder, specification, and volume. We reply by email or WhatsApp.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a
+        href="/contact/#inquiry-form"
+        class="inline-flex items-center justify-center rounded-lg bg-primary text-white font-medium px-5 py-2.5 hover:opacity-90 transition-opacity"
+      >
+        Request a quote
+      </a>
+      <a
+        href={target.href}
+        class="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 font-medium px-5 py-2.5 hover:bg-page transition-colors"
+      >
+        {target.label}
+      </a>
+    </div>
+  </div>
+</section>

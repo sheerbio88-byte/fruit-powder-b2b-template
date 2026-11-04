@@ -1,0 +1,42 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+import { buildContactPageSchema } from '~/utils/organization-schema';
+import { getInquiryForm } from '~/i18n/forms';
+import pages from '~/data/catalog/pages.json';
+
+const form = getInquiryForm('en');
+const page = pages['/contact/'];
+
+
+const metadata = {
+  title: page?.seoTitle || 'Contact',
+  description: page?.description || 'Contact Sheer Superfood for fruit and vegetable powder quotes.',
+  ignoreTitleTemplate: Boolean(page?.seoTitle),
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-6">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary mb-3">Contact</p>
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">Request a quote</h1>
+      <p class="text-muted">Send the product, specification, and volume. We reply by email or WhatsApp.</p>
+      <div class="mt-6 flex flex-wrap justify-center gap-6 text-sm">
+        <button type="button" data-open-quote class="text-link">Request a quote</button>
+      </div>
+      <p class="mt-4 text-sm text-muted">Room 1204, Vanke Huizhi Center, Yanta District, Xi'an City, Shaanxi, China</p>
+    </div>
+  </section>
+  <ContactUs
+    id="inquiry-form"
+    title="Inquiry"
+    subtitle="Name, email, and the ingredient you need."
+    button={form.button}
+    inputs={form.inputs}
+    textarea={form.textarea}
+    disclaimer={form.disclaimer}
+    description={form.description}
+  />
+  <script type="application/ld+json" set:html={JSON.stringify(buildContactPageSchema())} />
+</Layout>

@@ -1,0 +1,61 @@
+---
+import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
+import { blogCategoryRobots, getStaticPathsBlogCategory } from '~/utils/blog';
+import { getBlogCategoryMetadata } from '~/utils/blog-archive-seo';
+import { getCanonical, getPermalink } from '~/utils/permalinks';
+import { buildBlogCollectionSchema } from '~/utils/collection-schema';
+
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import Pagination from '~/components/blog/Pagination.astro';
+
+export const prerender = true;
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return await getStaticPathsBlogCategory({ paginate });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths> & { category: Record<string, string> };
+
+const { page, category } = Astro.props as Props;
+
+const currentPage = page.currentPage ?? 1;
+
+const categoryMeta = getBlogCategoryMetadata(category.title, currentPage);
+
+const isIndexed = blogCategoryRobots?.index && currentPage === 1;
+
+const metadata = {
+  title: categoryMeta.title,
+  description: categoryMeta.description,
+  robots: {
+    index: isIndexed,
+    follow: blogCategoryRobots?.follow,
+  },
+  openGraph: categoryMeta.openGraph,
+};
+
+const archiveUrl = String(getCanonical(Astro.url.pathname));
+const collectionSchema = isIndexed
+  ? buildBlogCollectionSchema({
+    name: categoryMeta.title,
+    description: categoryMeta.description,
+    url: archiveUrl,
+    posts: page.data.map((post) => ({
+      title: post.title,
+      url: String(getCanonical(getPermalink(post.permalink, 'post'))),
+    })),
+  })
+  : null;
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline>{category.title}</Headline>
+    <BlogList posts={page.data} />
+    <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
+  </section>
+
+  {collectionSchema && <script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />}
+</Layout>

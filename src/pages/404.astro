@@ -1,0 +1,158 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { UI } from '~/i18n/ui';
+import { LOCALES, type Locale } from '~/i18n/locales';
+
+const metadata = {
+  title: 'Page Not Found',
+  description: 'The page you requested was not found. Browse the Sheer Superfood catalog or contact us.',
+  robots: { index: false, follow: true },
+};
+
+const NOT_FOUND: Record<Locale, { title: string; lede: string; back: string }> = {
+  en: {
+    title: "Sorry, we couldn't find this page.",
+    lede: 'Check the address, or continue from the catalog.',
+    back: 'Back to homepage',
+  },
+  zh: {
+    title: '没有找到这个页面。',
+    lede: '请检查地址，或从产品目录继续。',
+    back: '返回首页',
+  },
+  'zh-tw': {
+    title: '找不到這個頁面。',
+    lede: '請檢查網址，或從產品目錄繼續。',
+    back: '返回首頁',
+  },
+  es: {
+    title: 'No encontramos esta página.',
+    lede: 'Revise la dirección o siga desde el catálogo.',
+    back: 'Volver al inicio',
+  },
+  pt: {
+    title: 'Não encontramos esta página.',
+    lede: 'Confira o endereço ou siga pelo catálogo.',
+    back: 'Voltar ao início',
+  },
+  fr: {
+    title: 'Cette page est introuvable.',
+    lede: "Vérifiez l'adresse, ou poursuivez depuis le catalogue.",
+    back: "Retour à l'accueil",
+  },
+  de: {
+    title: 'Diese Seite wurde nicht gefunden.',
+    lede: 'Prüfen Sie die Adresse, oder gehen Sie über den Katalog weiter.',
+    back: 'Zur Startseite',
+  },
+  it: {
+    title: 'Pagina non trovata.',
+    lede: "Controlla l'indirizzo, oppure continua dal catalogo.",
+    back: 'Torna alla home',
+  },
+  ru: {
+    title: 'Страница не найдена.',
+    lede: 'Проверьте адрес или перейдите в каталог.',
+    back: 'На главную',
+  },
+  ja: {
+    title: 'ページが見つかりません。',
+    lede: 'アドレスを確認するか、製品一覧から続けてください。',
+    back: 'ホームへ戻る',
+  },
+  ko: {
+    title: '페이지를 찾을 수 없습니다.',
+    lede: '주소를 확인하거나 제품 목록에서 계속하세요.',
+    back: '홈으로',
+  },
+  ar: {
+    title: 'لم نعثر على هذه الصفحة.',
+    lede: 'تحقق من العنوان، أو تابع من الكتالوج.',
+    back: 'العودة إلى الرئيسية',
+  },
+  id: {
+    title: 'Halaman ini tidak ditemukan.',
+    lede: 'Periksa alamatnya, atau lanjut dari katalog.',
+    back: 'Kembali ke beranda',
+  },
+  vi: {
+    title: 'Không tìm thấy trang này.',
+    lede: 'Kiểm tra địa chỉ, hoặc tiếp tục từ danh mục.',
+    back: 'Về trang chủ',
+  },
+};
+
+const copy = Object.fromEntries(
+  LOCALES.map((locale) => [
+    locale,
+    {
+      ...NOT_FOUND[locale],
+      products: UI[locale].products,
+      oem: UI[locale].oem,
+      about: UI[locale].about,
+      contact: UI[locale].contact,
+    },
+  ]),
+);
+---
+
+<Layout metadata={metadata}>
+  <script is:inline>
+    (function () {
+      var path = location.pathname;
+      var leaf = path.split('/').pop() || '';
+      if (!path.endsWith('/') && !/\.[a-z0-9]{1,8}$/i.test(leaf)) {
+        location.replace(path + '/' + location.search + location.hash);
+      }
+    })();
+  </script>
+  <section id="ssf-404" class="mx-auto max-w-3xl px-4 py-20 text-center md:px-6 md:py-28">
+    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">404</p>
+    <h1 data-ssf-404="title" class="mt-3 font-heading text-4xl font-semibold tracking-tight text-heading">
+      Sorry, we couldn't find this page.
+    </h1>
+    <p data-ssf-404="lede" class="mx-auto mt-4 max-w-xl text-muted leading-relaxed">
+      Check the address, or continue from the catalog.
+    </p>
+    <div class="mt-8">
+      <a data-ssf-404="back" data-ssf-404-link="back" data-ssf-404-path="/" href="/" class="btn-primary">Back to homepage</a>
+    </div>
+    <ul class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+      <li><a class="text-link" href="/products/" data-ssf-404-link="products" data-ssf-404-path="/products/">Products</a></li>
+      <li><a class="text-link" href="/services/" data-ssf-404-link="oem" data-ssf-404-path="/services/">OEM</a></li>
+      <li><a class="text-link" href="/about-us/" data-ssf-404-link="about" data-ssf-404-path="/about-us/">About us</a></li>
+      <li><a class="text-link" href="/contact/" data-ssf-404-link="contact" data-ssf-404-path="/contact/">Contact</a></li>
+    </ul>
+  </section>
+  <script is:inline define:vars={{ copy, locales: LOCALES }}>
+    (function () {
+      if (!location.pathname.endsWith('/')) return;
+      var segment = location.pathname.split('/').filter(Boolean)[0];
+      var locale = locales.indexOf(segment) >= 0 ? segment : 'en';
+      var pack = copy[locale] || copy.en;
+      var prefix = locale === 'en' ? '' : '/' + locale;
+      var root = document.getElementById('ssf-404');
+      if (!root || !pack) return;
+      var title = root.querySelector('[data-ssf-404="title"]');
+      var lede = root.querySelector('[data-ssf-404="lede"]');
+      var back = root.querySelector('[data-ssf-404="back"]');
+      if (title) title.textContent = pack.title;
+      if (lede) lede.textContent = pack.lede;
+      if (back) {
+        back.textContent = pack.back;
+        back.setAttribute('href', prefix ? prefix + '/' : '/');
+      }
+      root.querySelectorAll('[data-ssf-404-link]').forEach(function (link) {
+        if (link === back) return;
+        var key = link.getAttribute('data-ssf-404-link');
+        var href = link.getAttribute('data-ssf-404-path') || '/';
+        if (pack[key]) link.textContent = pack[key];
+        link.setAttribute('href', prefix + href);
+      });
+      if (locale === 'ar') {
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+      }
+    })();
+  </script>
+</Layout>

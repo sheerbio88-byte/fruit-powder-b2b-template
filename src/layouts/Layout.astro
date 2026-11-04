@@ -1,0 +1,96 @@
+---
+import '~/assets/styles/tailwind.css';
+
+import { getLocaleFromPath, LOCALE_META } from '~/i18n/locales';
+
+import CommonMeta from '~/components/common/CommonMeta.astro';
+import Favicons from '~/components/Favicons.astro';
+import CustomStyles from '~/components/CustomStyles.astro';
+import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
+import Metadata from '~/components/common/Metadata.astro';
+import SiteVerification from '~/components/common/SiteVerification.astro';
+import Analytics from '~/components/common/Analytics.astro';
+import LeadAttribution from '~/components/common/LeadAttribution.astro';
+import BasicScripts from '~/components/common/BasicScripts.astro';
+
+// Comment the line below to disable View Transitions
+import { ClientRouter } from 'astro:transitions';
+
+import type { MetaData as MetaDataType } from '~/types';
+
+export interface Props {
+  metadata?: MetaDataType;
+}
+
+const { metadata = {} } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
+const language = LOCALE_META[locale].htmlLang;
+const textDirection = LOCALE_META[locale].dir;
+---
+
+<!doctype html>
+<html lang={language} dir={textDirection} class="2xl:text-[20px]">
+  <head>
+    <CommonMeta />
+    <Favicons />
+    <CustomStyles />
+    <ApplyColorMode />
+    <Metadata {...metadata} />
+    <SiteVerification />
+    <LeadAttribution />
+    <!-- GA deferred inside Analytics.astro (idle) for LCP/FCP -->
+    <Analytics />
+
+    <!-- Comment the line below to disable View Transitions -->
+    <ClientRouter fallback="swap" />
+  </head>
+
+  <body class="min-w-0 overflow-x-hidden antialiased text-default bg-page tracking-normal font-sans">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-NNR9QZSL"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <slot />
+
+    <BasicScripts />
+
+    <!-- GTM : load after idle / window load to protect Core Web Vitals -->
+    <script is:inline>
+      (function () {
+        function loadGtm() {
+          if (window.__gtmLoaded) return;
+          window.__gtmLoaded = true;
+          var w = window,
+            d = document,
+            s = 'script',
+            l = 'dataLayer',
+            i = 'GTM-NNR9QZSL';
+          w[l] = w[l] || [];
+          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true;
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        }
+        function loadTrackers() {
+          loadGtm();
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadTrackers, { timeout: 3500 });
+        } else {
+          window.addEventListener('load', function () {
+            setTimeout(loadTrackers, 1500);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

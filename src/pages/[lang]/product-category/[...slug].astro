@@ -1,0 +1,60 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { I18N_LOCALES, pagePath, type Locale } from '~/i18n/locales';
+import { categoryName, productTitle } from '~/i18n/titles';
+import { getUi } from '~/i18n/ui';
+import categories from '~/data/catalog/categories.json';
+import products from '~/data/catalog/products.json';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.flatMap((lang) =>
+    categories.map((category) => ({
+      params: { lang, slug: category.slug },
+      props: { category },
+    }))
+  );
+}
+
+const locale = Astro.params.lang as Locale;
+const { category } = Astro.props;
+const ui = getUi(locale);
+const name = categoryName(category.slug, locale);
+const items = products.filter((product) =>
+  product.categories.some((item) => item.slug === category.slug || item.slug.startsWith(`${category.slug}/`))
+);
+
+const metadata = {
+  title: name,
+  description: ui.categoryMeta(name),
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="pt-28 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <p class="text-sm text-muted mb-3">
+        <a href={pagePath('/products/', locale)} class="text-link">{ui.products}</a>
+      </p>
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">{name}</h1>
+      <p class="max-w-2xl text-muted mb-8">{ui.categoryMeta(name)} {ui.productCount(items.length)}</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {
+          items.map((product) => (
+            <a href={pagePath(product.path, locale)} class="border border-stone-200 bg-elevated overflow-hidden hover:border-primary/40">
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt={productTitle(product.slug, product.title, locale)}
+                  class="aspect-square w-full bg-white object-contain p-3"
+                  loading="lazy"
+                />
+              )}
+              <span class="block p-3 text-sm font-medium text-heading">{productTitle(product.slug, product.title, locale)}</span>
+            </a>
+          ))
+        }
+      </div>
+      {items.length === 0 && <p class="text-muted">{ui.noProducts}</p>}
+    </div>
+  </section>
+</Layout>

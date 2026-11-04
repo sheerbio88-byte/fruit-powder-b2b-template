@@ -1,0 +1,198 @@
+@import 'tailwindcss';
+
+@plugin "@tailwindcss/typography";
+
+@variant dark (&:where(.dark, .dark *));
+
+@custom-variant intersect (&:not([no-intersect]));
+
+@theme {
+  --color-primary: var(--aw-color-primary);
+  --color-secondary: var(--aw-color-secondary);
+  --color-accent: var(--aw-color-accent);
+  --color-default: var(--aw-color-text-default);
+  --color-muted: var(--aw-color-text-muted);
+  --color-heading: var(--aw-color-text-heading);
+
+  --font-sans:
+    'var(--aw-font-sans, ui-sans-serif)', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-serif: 'var(--aw-font-serif, ui-serif)', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-heading: 'var(--aw-font-heading, ui-serif)', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+
+  --animate-fade: fadeInUp 0.8s both;
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@utility bg-page {
+  background-color: var(--aw-color-bg-page);
+}
+
+@utility bg-dark {
+  background-color: var(--aw-color-bg-page-dark);
+}
+
+@utility bg-light {
+  background-color: var(--aw-color-bg-page);
+}
+
+@utility bg-elevated {
+  background-color: var(--aw-color-bg-elevated);
+}
+
+@utility bg-soft {
+  background-color: var(--aw-color-bg-soft);
+}
+
+@utility text-page {
+  color: var(--aw-color-text-page);
+}
+
+@utility text-muted {
+  color: var(--aw-color-text-muted);
+}
+
+@utility text-heading {
+  color: var(--aw-color-text-heading);
+}
+
+@utility text-link {
+  color: var(--aw-color-primary);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  @apply font-medium underline-offset-4 hover:underline hover:text-secondary transition-colors;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center rounded-lg border border-stone-300/80 bg-transparent font-medium text-center text-sm sm:text-base text-page leading-snug transition py-2.5 px-5 md:px-6 ease-out duration-200 focus:ring-primary/40 focus:ring-offset-2 focus:ring-2 focus:ring-offset-[var(--aw-color-bg-page)] hover:bg-soft hover:border-stone-400 dark:border-stone-600 dark:hover:bg-stone-800 dark:hover:border-stone-500 cursor-pointer whitespace-nowrap;
+}
+
+@utility btn-primary {
+  @apply btn font-semibold bg-primary text-white border-primary hover:bg-secondary hover:border-secondary hover:text-white dark:text-stone-950 dark:bg-primary dark:border-primary dark:hover:bg-secondary dark:hover:border-secondary dark:hover:text-stone-950 shadow-sm;
+}
+
+@utility btn-secondary {
+  @apply btn bg-elevated border-stone-300/90;
+}
+
+@utility btn-tertiary {
+  @apply btn border-none shadow-none text-muted hover:text-heading dark:hover:text-white;
+}
+
+#header [data-aw-header-bg] {
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+#header.scroll [data-aw-header-bg] {
+  background-color: color-mix(in srgb, var(--aw-color-bg-page) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgb(28 25 23 / 8%);
+  box-shadow: 0 1px 0 0 rgb(28 25 23 / 4%);
+}
+.dark #header.scroll [data-aw-header-bg],
+#header.scroll.dark [data-aw-header-bg] {
+  background-color: color-mix(in srgb, var(--aw-color-bg-page) 95%, transparent);
+  border-bottom: 1px solid rgb(245 240 232 / 10%);
+  box-shadow: none;
+}
+
+#header.expanded nav {
+  position: fixed;
+  top: 4.5rem;
+  left: 0;
+  right: 0;
+  bottom: 5rem !important;
+  padding: 0.5rem 0.75rem 1rem;
+  background-color: var(--aw-color-bg-page);
+  border-top: 1px solid rgb(28 25 23 / 8%);
+  z-index: 30;
+}
+
+#header.scroll {
+  box-shadow: 0 1px 0 0 rgb(28 25 23 / 6%);
+}
+
+.dropdown:focus .dropdown-menu,
+.dropdown:focus-within .dropdown-menu,
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+[astro-icon].icon-light > * {
+  stroke-width: 1.2;
+}
+
+[astro-icon].icon-bold > * {
+  stroke-width: 2.4;
+}
+
+[data-aw-toggle-menu] path {
+  @apply transition;
+}
+[data-aw-toggle-menu].expanded g > path:first-child {
+  @apply -rotate-45 translate-y-[15px] translate-x-[-3px];
+}
+[data-aw-toggle-menu].expanded g > path:last-child {
+  @apply rotate-45 translate-y-[-8px] translate-x-[14px];
+}
+
+.dd *:first-child {
+  margin-top: 0;
+}
+
+/* Native anchor scroll offsets for fixed UI chrome */
+html:has([data-aw-sticky-header]) {
+  scroll-padding-top: 5rem;
+}
+
+/* reCAPTCHA v2 is fixed ~304px — prevent horizontal page scroll on narrow phones */
+.recaptcha-scale {
+  max-width: 100%;
+}
+@media (max-width: 360px) {
+  .recaptcha-scale {
+    transform: scale(0.88);
+    transform-origin: top left;
+    height: 68px;
+  }
+}
+@media (max-width: 320px) {
+  .recaptcha-scale {
+    transform: scale(0.78);
+    height: 61px;
+  }
+}
+
+/* Defensive: long unbroken tokens / media never force page-wide scroll */
+img,
+video,
+iframe {
+  max-width: 100%;
+}
+
+code,
+pre {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Soft card surface used across widgets */
+.surface-card {
+  background-color: var(--aw-color-bg-elevated);
+  border: 1px solid var(--aw-color-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgb(28 25 23 / 4%);
+}

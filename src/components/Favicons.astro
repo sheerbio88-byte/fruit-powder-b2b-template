@@ -1,0 +1,16 @@
+---
+/**
+ * SheerHerb site icon from the original WordPress uploads.
+ *
+ * Use files under /public only (stable absolute paths).
+ * Real multi-size .ico at /favicon.ico — required for Bing/Edge tab icons.
+ * Do not Vite-import tiny icons (they become data: URIs and break MIME).
+ */
+const cacheBust = 'v5';
+---
+
+<link rel="icon" href={`/favicon.ico?${cacheBust}`} sizes="any" />
+<link rel="icon" href={`/wp-content/uploads/2025/12/cropped-LOGO2-32x32.png?${cacheBust}`} type="image/png" sizes="32x32" />
+<link rel="icon" href={`/wp-content/uploads/2025/12/cropped-LOGO2-192x192.png?${cacheBust}`} type="image/png" sizes="192x192" />
+<link rel="apple-touch-icon" href={`/wp-content/uploads/2025/12/cropped-LOGO2-180x180.png?${cacheBust}`} />
+<meta name="msapplication-TileImage" content="/wp-content/uploads/2025/12/cropped-LOGO2-270x270.png" />

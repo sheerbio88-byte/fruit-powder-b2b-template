@@ -1,0 +1,137 @@
+---
+/**
+ * First-touch lead capture in <head>. Must stay is:inline so referrer is
+ * frozen before the visitor clicks Contact.
+ * Storage key / TTL must match ~/utils/lead-source.ts.
+ */
+import { LEAD_ATTR_STORAGE_KEY, LEAD_ATTR_TTL_MS } from '~/utils/lead-source';
+---
+
+<script is:inline define:vars={{ KEY: LEAD_ATTR_STORAGE_KEY, TTL: LEAD_ATTR_TTL_MS }}>
+  (function () {
+    function hostFromUrl(url) {
+      if (!url) return '';
+      try {
+        return new URL(url).hostname.replace(/^www\./, '').toLowerCase();
+      } catch {
+        return '';
+      }
+    }
+
+    function isSameSite(ref, host) {
+      const h = hostFromUrl(ref);
+      return Boolean(
+        h &&
+        h ===
+          String(host || '')
+            .replace(/^www\./, '')
+            .toLowerCase()
+      );
+    }
+
+    function hasCampaign(search) {
+      const raw = search || '';
+      const p = new URLSearchParams(raw.charAt(0) === '?' ? raw.slice(1) : raw);
+      return Boolean(
+        p.get('gclid') ||
+        p.get('gbraid') ||
+        p.get('wbraid') ||
+        p.get('utm_source') ||
+        p.get('utm_medium') ||
+        p.get('utm_campaign')
+      );
+    }
+
+    function parseStored(raw) {
+      if (!raw) return null;
+      try {
+        const o = JSON.parse(raw);
+        if (!o || o.v !== 1 || !o.first || !o.first.captured_at) return null;
+        const age = Date.now() - Date.parse(o.first.captured_at);
+        if (!isFinite(age) || age > TTL) return null;
+        return o;
+      } catch {
+        return null;
+      }
+    }
+
+    function read() {
+      let raw = null;
+      try {
+        raw = localStorage.getItem(KEY);
+      } catch {
+        /* private mode */
+      }
+      if (!raw) {
+        try {
+          raw = sessionStorage.getItem(KEY);
+        } catch {
+          /* sessionStorage blocked */
+        }
+      }
+      if (!raw) {
+        const parts = document.cookie.split(';');
+        for (let i = 0; i < parts.length; i++) {
+          const t = parts[i].trim();
+          if (t.indexOf(KEY + '=') === 0) {
+            try {
+              raw = decodeURIComponent(t.slice(KEY.length + 1));
+            } catch {
+              raw = t.slice(KEY.length + 1);
+            }
+            break;
+          }
+        }
+      }
+      return parseStored(raw);
+    }
+
+    function write(value) {
+      const raw = JSON.stringify(value);
+      try {
+        localStorage.setItem(KEY, raw);
+      } catch {
+        /* private mode */
+      }
+      try {
+        sessionStorage.setItem(KEY, raw);
+      } catch {
+        /* sessionStorage blocked */
+      }
+      try {
+        document.cookie =
+          KEY + '=' + encodeURIComponent(raw) + '; path=/; max-age=' + Math.floor(TTL / 1000) + '; SameSite=Lax';
+      } catch {
+        /* cookie blocked */
+      }
+    }
+
+    const host = location.hostname;
+    const ref = document.referrer || '';
+    const external = ref && !isSameSite(ref, host) ? ref : '';
+    const touch = {
+      captured_at: new Date().toISOString(),
+      landing_page: location.href,
+      search: location.search || '',
+      referrer: external || null,
+      referrer_host: external ? hostFromUrl(external) : null,
+    };
+
+    const stored = read();
+    const hasCamp = hasCampaign(touch.search);
+    const hasExt = Boolean(touch.referrer);
+    const weak = stored ? !hasCampaign(stored.first.search) && !stored.first.referrer : true;
+
+    if (!stored) {
+      write({ v: 1, first: touch, last: null });
+      return;
+    }
+    if (hasCamp) {
+      write({ v: 1, first: weak ? touch : stored.first, last: touch });
+      return;
+    }
+    if (hasExt && weak) {
+      write({ v: 1, first: touch, last: stored.last || null });
+    }
+  })();
+</script>

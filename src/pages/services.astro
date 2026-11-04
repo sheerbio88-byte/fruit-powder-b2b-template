@@ -1,0 +1,38 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Blocks from '~/components/content/Blocks.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+import { getInquiryForm } from '~/i18n/forms';
+import pages from '~/data/catalog/pages.json';
+
+const page = pages['/services/'];
+const form = getInquiryForm('en');
+const blocks = page?.blocks || [];
+const titleBlock = blocks.find((block) => block.type === 'h2' && block.text);
+const bodyBlocks = titleBlock ? blocks.filter((block) => block !== titleBlock) : blocks;
+const metadata = {
+  title: page?.seoTitle || 'OEM',
+  description: page?.description || 'OEM and custom fruit and vegetable powder programs.',
+  ignoreTitleTemplate: Boolean(page?.seoTitle),
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <h1 class="font-heading text-4xl font-semibold text-heading">OEM</h1>
+      {titleBlock?.text && <p class="mt-4 text-lg text-muted leading-relaxed">{titleBlock.text}</p>}
+    </div>
+  </section>
+  <Blocks blocks={bodyBlocks} />
+  <ContactUs
+    id="inquiry-form"
+    title="OEM inquiry"
+    subtitle="Tell us the ingredient, finished form, and volume."
+    button={form.button}
+    inputs={form.inputs}
+    textarea={form.textarea}
+    disclaimer={form.disclaimer}
+    description={form.description}
+  />
+</Layout>

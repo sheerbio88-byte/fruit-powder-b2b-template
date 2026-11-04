@@ -1,0 +1,47 @@
+---
+import FormContainer from '~/components/ui/Form.astro';
+import { getInquiryForm } from '~/i18n/forms';
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  button?: string;
+  /** Two columns: copy and optional slot on the left, form on the right. */
+  wide?: boolean;
+}
+
+const form = getInquiryForm('en');
+const {
+  title = 'Get your factory quote',
+  subtitle = form.description,
+  button = form.button,
+  wide = false,
+} = Astro.props;
+---
+
+<section id="inquiry-form" class="not-prose scroll-mt-24 bg-soft/50 py-16 md:py-20">
+  <div
+    class:list={[
+      'mx-auto px-4 md:px-6',
+      wide ? 'grid max-w-6xl items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)]' : 'max-w-xl',
+    ]}
+  >
+    <div>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary mb-2">Inquiry</p>
+      <h2 class="font-heading text-3xl font-semibold tracking-tight text-heading">{title}</h2>
+      <p class="mt-3 text-muted leading-relaxed">{subtitle}</p>
+      <slot />
+      <p id="ube-pick" hidden class="mt-4 rounded-md bg-primary/10 px-3 py-2 text-sm font-medium text-primary"></p>
+    </div>
+    <div class:list={['rounded-xl border border-stone-200/90 bg-elevated p-5 shadow-sm sm:p-7', wide ? 'mt-2 lg:mt-0' : 'mt-8']}>
+      <FormContainer
+        formId="landing-inquiry"
+        button={button}
+        inputs={form.inputs}
+        textarea={form.textarea}
+        disclaimer={form.disclaimer}
+        description={form.description}
+      />
+    </div>
+  </div>
+</section>

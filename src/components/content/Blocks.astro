@@ -1,0 +1,75 @@
+---
+export interface Block {
+  type: string;
+  text?: string;
+  src?: string;
+  alt?: string;
+}
+
+interface Props {
+  blocks?: Block[];
+}
+
+const { blocks = [] } = Astro.props;
+
+type Group =
+  | { kind: 'list'; items: string[] }
+  | { kind: 'images'; items: Block[] }
+  | { kind: 'block'; block: Block };
+
+const grouped: Group[] = [];
+for (const block of blocks) {
+  if (block.type === 'li' && block.text) {
+    const last = grouped[grouped.length - 1];
+    if (last?.kind === 'list') last.items.push(block.text);
+    else grouped.push({ kind: 'list', items: [block.text] });
+    continue;
+  }
+  if (block.type === 'img' && block.src) {
+    const last = grouped[grouped.length - 1];
+    if (last?.kind === 'images') last.items.push(block);
+    else grouped.push({ kind: 'images', items: [block] });
+    continue;
+  }
+  grouped.push({ kind: 'block', block });
+}
+
+const linesOf = (text = '') => text.split('\n').map((line) => line.trim()).filter(Boolean);
+---
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-4 text-muted">
+  {
+    grouped.map((group) => {
+      if (group.kind === 'list') {
+        return (
+          <ul class="space-y-2 ps-5 list-disc">
+            {group.items.map((item) => <li>{item}</li>)}
+          </ul>
+        );
+      }
+      if (group.kind === 'images') {
+        return (
+          <div class:list={['grid gap-4', group.items.length > 1 && 'sm:grid-cols-2']}>
+            {group.items.map((image) => (
+              <img src={image.src} alt={image.alt || ''} class="w-full rounded-md bg-white" loading="lazy" />
+            ))}
+          </div>
+        );
+      }
+      const block = group.block;
+      if (block.type === 'h2') return <h2 class="font-heading text-2xl md:text-3xl font-semibold text-heading pt-4">{block.text}</h2>;
+      if (block.type === 'h3' || block.type === 'h4' || block.type === 'h5' || block.type === 'h6') {
+        return <h3 class="font-heading text-xl font-semibold text-heading pt-2">{block.text}</h3>;
+      }
+      const lines = linesOf(block.text);
+      if (lines.length > 1) {
+        return (
+          <ul class="space-y-2 ps-5 list-disc">
+            {lines.map((line) => <li>{line}</li>)}
+          </ul>
+        );
+      }
+      return <p class="leading-relaxed">{lines[0] || ''}</p>;
+    })
+  }
+</div>

@@ -1,0 +1,48 @@
+---
+/**
+ * Visible "Key facts / At a glance" block for buyers and AI answer engines.
+ * Plain factual sentences only; each fact restates content already published on this site
+ * (FAQ, schema, hub copy) and mirrors the "## Key facts" section of /llms.txt.
+ */
+import type { KeyFact } from '~/data/key-facts';
+
+export interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  facts: KeyFact[];
+}
+
+const { id = 'key-facts', eyebrow = 'At a glance', title = 'Key facts', intro, facts } = Astro.props;
+---
+
+<section class="not-prose py-12 md:py-16" id={id} aria-labelledby={`${id}-title`}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-12">
+      <div class="lg:col-span-4">
+        <p class="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary mb-2">{eyebrow}</p>
+        <h2 id={`${id}-title`} class="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-heading">{title}</h2>
+        {intro && <p class="mt-3 text-sm md:text-base text-muted leading-relaxed">{intro}</p>}
+      </div>
+      <dl class="lg:col-span-8 divide-y border-y divide-stone-200/90 border-stone-200/90">
+        {
+          facts.map(({ label, text, href, linkText }) => (
+            <div class="grid sm:grid-cols-[11rem_1fr] gap-1 sm:gap-6 py-3.5">
+              <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-muted sm:pt-1">{label}</dt>
+              <dd class="text-sm md:text-base leading-relaxed text-default">
+                {text}
+                {href && (
+                  <>
+                    {' '}
+                    <a href={href} class="font-semibold text-primary hover:underline underline-offset-4">{linkText ?? 'Learn more'} →</a>
+                  </>
+                )}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>

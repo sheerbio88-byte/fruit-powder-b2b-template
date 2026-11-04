@@ -1,0 +1,24 @@
+---
+interface Props {
+  whatsappHref: string;
+  quoteLabel?: string;
+}
+
+const { whatsappHref, quoteLabel = 'Get quote' } = Astro.props;
+---
+
+<div
+  id="ube-mobile-bar"
+  class="fixed inset-x-0 bottom-0 z-50 border-t border-stone-200/90 bg-page/95 px-3 pt-3 backdrop-blur md:hidden"
+  style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))"
+>
+  <div class="mx-auto flex max-w-lg gap-2">
+    <a href="#inquiry-form" class="btn-primary flex-1 justify-center text-center">{quoteLabel}</a>
+    <a
+      href={whatsappHref}
+      class="inline-flex flex-1 items-center justify-center rounded-md border border-primary px-3 py-2.5 text-sm font-semibold text-primary"
+    >
+      WhatsApp
+    </a>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Blocks from '~/components/content/Blocks.astro';
+import { buildAboutPageSchema } from '~/utils/organization-schema';
+import pages from '~/data/catalog/pages.json';
+
+const page = pages['/about-us/'];
+const metadata = {
+  title: page?.seoTitle || 'About Us',
+  description: page?.description || 'About Sheer Superfood, supplier of fruit and vegetable powders.',
+  ignoreTitleTemplate: Boolean(page?.seoTitle),
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <h1 class="font-heading text-4xl font-semibold text-heading">About Us</h1>
+    </div>
+  </section>
+  <Blocks blocks={page?.blocks || []} />
+  <script type="application/ld+json" set:html={JSON.stringify(buildAboutPageSchema())} />
+</Layout>

@@ -1,0 +1,51 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { I18N_LOCALES, WHATSAPP_BY_LOCALE, pagePath, type Locale } from '~/i18n/locales';
+import { getUi } from '~/i18n/ui';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+
+const metadata = {
+  title: ui.thanksTitle,
+  description: ui.thanksBody,
+  ignoreTitleTemplate: true,
+  robots: { index: false, follow: false },
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose py-20 md:py-28">
+    <div class="max-w-xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-[11px] font-semibold tracking-[0.22em] uppercase text-primary mb-4">{ui.thanksEyebrow}</p>
+      <h1 class="font-heading text-3xl md:text-4xl font-medium text-heading mb-4">{ui.thanksTitle}</h1>
+      <p class="text-muted leading-relaxed mb-8">{ui.thanksBody}</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <span data-wa-after hidden></span>
+        <a href={pagePath('/products/', locale)} class="btn">{ui.browseCatalog}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function () {
+    var slot = document.querySelector('[data-wa-after]');
+    if (!slot) return;
+    var data = null;
+    try { data = JSON.parse(sessionStorage.getItem('ssf:lastInquiry') || 'null'); } catch (e) { data = null; }
+    if (!data || !data.at || Date.now() - data.at > 30 * 60 * 1000) return;
+    var lines = ['Sheer Superfood inquiry', data.name && 'Name: ' + data.name, data.email && 'Email: ' + data.email, data.product && 'Product: ' + data.product, data.volume && 'Volume: ' + data.volume].filter(Boolean);
+    var a = document.createElement('a');
+    a.className = 'btn btn-primary';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.href = 'https://wa.me/' + String(import.meta.env.PUBLIC_CONTACT_WHATSAPP_NUMBER || '').replace(/\D/g, '') + '?text=' + encodeURIComponent(lines.join('\n'));
+    a.textContent = 'Chat on WhatsApp';
+    slot.replaceWith(a);
+  })();
+</script>

@@ -1,0 +1,27 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { I18N_LOCALES, type Locale } from '~/i18n/locales';
+import { getUi } from '~/i18n/ui';
+import { buildAboutPageSchema } from '~/utils/organization-schema';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+const metadata = {
+  title: ui.aboutTitle,
+  description: ui.metaAboutDescription,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-4">
+      <h1 class="font-heading text-4xl font-semibold text-heading">{ui.aboutTitle}</h1>
+      {ui.aboutParagraphs.map((paragraph) => <p class="text-muted leading-relaxed">{paragraph}</p>)}
+    </div>
+  </section>
+  <script type="application/ld+json" set:html={JSON.stringify(buildAboutPageSchema())} />
+</Layout>

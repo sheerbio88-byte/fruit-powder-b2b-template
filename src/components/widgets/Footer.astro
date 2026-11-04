@@ -1,0 +1,148 @@
+---
+import { Icon } from 'astro-icon/components';
+import { getHomePermalink } from '~/utils/permalinks';
+
+interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+  target?: string;
+  rel?: string;
+}
+
+interface Links {
+  title?: string;
+  links: Array<Link>;
+}
+
+export interface Props {
+  links: Array<Links>;
+  secondaryLinks: Array<Link>;
+  socialLinks: Array<Link>;
+  footNote?: string;
+  theme?: string;
+  homeHref?: string;
+  blurb?: string;
+  tagline?: string;
+  ctaBandTitle?: string;
+  ctaBandBody?: string;
+  ctaBandButton?: string;
+  quoteHref?: string;
+}
+
+const {
+  socialLinks = [],
+  secondaryLinks = [],
+  links = [],
+  footNote = '',
+  homeHref = getHomePermalink(),
+  blurb = 'Fruit and vegetable powders for food, beverage, and supplement brands. OEM and bulk supply.',
+  tagline = 'Fruit & vegetable powders',
+  ctaBandTitle = 'Need a fruit or vegetable powder quote?',
+  ctaBandBody = 'Tell us the ingredient, specification, and volume.',
+  ctaBandButton = 'Request a quote',
+  quoteHref = '/contact/#inquiry-form',
+} = Astro.props;
+---
+
+<footer class="relative not-prose border-t border-stone-200/80 bg-soft/40">
+  <!-- B2B CTA band -->
+  <div class="border-b border-stone-200/80 bg-page">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="max-w-xl">
+        <p class="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-heading leading-tight">
+          {ctaBandTitle}
+        </p>
+        <p class="mt-2 text-sm text-muted">
+          {ctaBandBody}
+        </p>
+      </div>
+      <a
+        href={quoteHref}
+        class="btn btn-primary shrink-0 self-start md:self-center"
+      >
+        {ctaBandButton}
+      </a>
+    </div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-12 gap-8 py-12 md:py-14">
+      <div class="col-span-12 lg:col-span-4">
+        <a class="inline-flex flex-col leading-none" href={homeHref}>
+          <span class="font-heading text-xl font-semibold tracking-[0.04em] text-heading uppercase">Sheer Superfood</span>
+          <span class="mt-1 text-[10px] font-semibold tracking-[0.16em] uppercase text-muted">
+            {tagline}
+          </span>
+        </a>
+        <p class="mt-4 text-sm text-muted leading-relaxed max-w-sm">
+          {blurb}
+        </p>
+        <div class="mt-4 text-sm text-muted flex flex-wrap gap-x-1 gap-y-1">
+          {
+            secondaryLinks.map(({ text, href }, index) => (
+              <>
+                {index !== 0 ? <span class="text-stone-300">·</span> : ''}
+                <a class="hover:text-primary hover:underline transition" href={href} set:html={text} />
+              </>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-8">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          {
+            links.map(({ title, links: groupLinks }) => (
+              <div>
+                <div class="text-[11px] font-semibold uppercase tracking-[0.14em] text-heading mb-3">{title}</div>
+                {groupLinks && Array.isArray(groupLinks) && groupLinks.length > 0 && (
+                  <ul class="text-sm">
+                    {groupLinks.map(({ text, href, ariaLabel, target, rel }) => (
+                      <li class="mb-2">
+                        <a
+                          class="text-muted hover:text-primary transition"
+                          href={href}
+                          aria-label={ariaLabel}
+                          target={target}
+                          rel={rel}
+                        >
+                          <Fragment set:html={text} />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="md:flex md:items-center md:justify-between py-6 border-t border-stone-200/80">
+      {
+        socialLinks?.length ? (
+          <ul class="flex mb-4 md:order-1 -ml-2 md:ml-4 md:mb-0">
+            {socialLinks.map(({ ariaLabel, href, text, icon }) => (
+              <li>
+                <a
+                  class="text-muted hover:text-primary hover:bg-elevated rounded-md text-sm p-2.5 inline-flex items-center"
+                  aria-label={ariaLabel || text}
+                  href={href}
+                >
+                  {icon && <Icon name={icon} class="w-5 h-5" aria-hidden="true" />}
+                  <span class="sr-only">{text || ariaLabel}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : null
+      }
+      <div class="text-sm text-muted">
+        <Fragment set:html={footNote} />
+      </div>
+    </div>
+  </div>
+</footer>

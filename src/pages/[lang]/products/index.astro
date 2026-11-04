@@ -1,0 +1,67 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { I18N_LOCALES, pagePath, type Locale } from '~/i18n/locales';
+import { categoryName, productTitle } from '~/i18n/titles';
+import { getUi } from '~/i18n/ui';
+import products from '~/data/catalog/products.json';
+import categories from '~/data/catalog/categories.json';
+
+export function getStaticPaths() {
+  return I18N_LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const ui = getUi(locale);
+const groups = categories
+  .filter((category) => !category.slug.includes('/'))
+  .map((category) => ({
+    category,
+    products: products.filter((product) =>
+      product.categories.some((item) => item.slug === category.slug || item.slug.startsWith(`${category.slug}/`))
+    ),
+  }))
+  .filter((group) => group.products.length);
+
+const metadata = {
+  title: ui.metaProductsTitle,
+  description: ui.metaProductsDescription,
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="not-prose pt-28 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <p class="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary mb-3">{ui.catalog}</p>
+      <h1 class="font-heading text-4xl font-semibold text-heading mb-4">{ui.products}</h1>
+      <p class="max-w-2xl text-muted">{ui.metaProductsDescription}</p>
+    </div>
+  </section>
+  {
+    groups.map((group) => (
+      <section class="not-prose pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="flex items-end justify-between mb-5">
+            <h2 class="font-heading text-2xl font-semibold text-heading">{categoryName(group.category.slug, locale)}</h2>
+            <a href={pagePath(group.category.path, locale)} class="text-sm text-link">{ui.viewCategory}</a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {group.products.map((product) => (
+              <a href={pagePath(product.path, locale)} class="border border-stone-200 bg-elevated overflow-hidden hover:border-primary/40">
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt={productTitle(product.slug, product.title, locale)}
+                    class="aspect-square w-full bg-white object-contain p-3"
+                    loading="lazy"
+                  />
+                )}
+                <span class="block p-3 text-sm font-medium text-heading">{productTitle(product.slug, product.title, locale)}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</Layout>

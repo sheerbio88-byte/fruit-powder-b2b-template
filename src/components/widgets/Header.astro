@@ -1,0 +1,279 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from '~/components/Logo.astro';
+import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import LocaleSwitch from '~/components/common/LocaleSwitch.astro';
+import Button from '~/components/ui/Button.astro';
+
+import { getHomePermalink } from '~/utils/permalinks';
+import { trimSlash } from '~/utils/permalinks';
+import type { CallToAction } from '~/types';
+
+interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+}
+
+interface MenuLink extends Link {
+  links?: Array<MenuLink>;
+}
+
+export interface Props {
+  id?: string;
+  links?: Array<MenuLink>;
+  actions?: Array<CallToAction>;
+  isSticky?: boolean;
+  isDark?: boolean;
+  isFullWidth?: boolean;
+  showToggleTheme?: boolean;
+  showRssFeed?: boolean;
+  showToggleMenu?: boolean;
+  disableLogoLink?: boolean;
+  position?: string;
+  homeHref?: string;
+  trustLeft?: string;
+  trustRight?: string;
+}
+
+const {
+  id = 'header',
+  links = [],
+  actions = [],
+  isSticky = false,
+  isFullWidth = false,
+  showToggleMenu = true,
+  disableLogoLink = false,
+  homeHref = getHomePermalink(),
+  trustLeft = 'HACCP · USDA Organic · ISO 9001 · Halal / Kosher',
+  trustRight = '<button type="button" data-open-quote class="text-heading font-semibold">Request a quote</button>',
+} = Astro.props;
+
+const trustItems = trustLeft
+  .split(/\s*[·/]\s*/)
+  .map((item) => item.trim())
+  .filter(Boolean);
+
+const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+const isCurrent = (href?: string) => {
+  if (!href) return false;
+  const bare = href.split('#')[0].replace(/\/+$/, '') || '/';
+  return bare === currentPath;
+};
+---
+
+<header
+  class:list={[
+    { sticky: isSticky, relative: !isSticky },
+    'top-0 z-40 flex-none mx-auto w-full border-b border-stone-200/70 bg-page/95 backdrop-blur-md',
+  ]}
+  {...isSticky ? { 'data-aw-sticky-header': true } : {}}
+  {...id ? { id } : {}}
+>
+  <!-- Scroll backdrop (must stay first child for legacy CSS; not toggled by mobile menu JS) -->
+  <div class="absolute inset-0 pointer-events-none" data-aw-header-bg aria-hidden="true"></div>
+
+  <!-- B2B micro bar — desktop only; never target with menu open/close scripts -->
+  <div class="ssf-trust-bar relative hidden md:block border-b" data-aw-trust-bar>
+    <div
+      class:list={[
+        'mx-auto px-4 md:px-6 flex items-center justify-between gap-x-6 gap-y-1 py-1.5',
+        { 'max-w-7xl': !isFullWidth },
+      ]}
+    >
+      <ul class="ssf-trust-certs">
+        {trustItems.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+      <span class="ssf-trust-phone tabular-nums" set:html={trustRight} />
+    </div>
+  </div>
+
+  <div
+    data-aw-header-bar
+    class:list={[
+      'relative text-default py-2.5 md:py-3 px-3 md:px-6 mx-auto w-full md:flex md:items-center md:justify-between md:gap-6',
+      { 'max-w-7xl': !isFullWidth },
+    ]}
+  >
+    <div class="flex justify-between items-center">
+      {
+        disableLogoLink ? (
+          <span class="flex items-center cursor-default" aria-hidden="true">
+            <Logo />
+          </span>
+        ) : (
+          <a class="flex items-center" href={homeHref}>
+            <Logo />
+          </a>
+        )
+      }
+      <div class="flex items-center gap-2 md:hidden">
+        <LocaleSwitch />
+        {showToggleMenu && <ToggleMenu />}
+      </div>
+    </div>
+
+    <nav
+      data-aw-mobile-nav
+      class="items-center w-full md:w-auto hidden md:flex md:flex-1 md:justify-center text-default overflow-y-auto overflow-x-hidden md:overflow-visible"
+      aria-label="Main navigation"
+    >
+      <ul class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.875rem] font-medium md:justify-center">
+        {
+          links.map(({ text, href, links }) => (
+            <li class={links?.length ? 'dropdown' : ''}>
+              {links?.length ? (
+                <>
+                  <button
+                    type="button"
+                    class="hover:text-primary px-3 py-3 md:py-2 flex items-center whitespace-nowrap w-full md:w-auto"
+                  >
+                    {text}{' '}
+                    <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline opacity-70" />
+                  </button>
+                  <ul class="dropdown-menu md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-elevated md:min-w-[200px] md:border md:border-stone-200/90 md:shadow-lg md:shadow-stone-900/5">
+                    {links.map(({ text: text2, href: href2 }) => (
+                      <li>
+                        <a
+                          class:list={[
+                            'md:hover:bg-soft hover:text-primary py-2.5 px-5 block whitespace-nowrap',
+                            { 'aw-link-active text-primary': isCurrent(href2) },
+                          ]}
+                          href={href2}
+                        >
+                          {text2}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <a
+                  class:list={[
+                    'hover:text-primary px-3 py-3 md:py-2 flex items-center whitespace-nowrap',
+                    { 'aw-link-active text-primary': isCurrent(href) },
+                  ]}
+                  href={href}
+                >
+                  {text}
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div
+      data-aw-header-actions
+      class="hidden md:self-center md:flex items-center md:mb-0 fixed w-full md:w-auto md:static justify-end left-0 bottom-0 p-3 md:p-0 bg-page md:bg-transparent border-t border-stone-200/80 md:border-0"
+    >
+      <div class="items-center flex justify-between w-full md:w-auto gap-3">
+        <LocaleSwitch class="hidden md:block" />
+        {
+          actions?.length ? (
+            <span class="w-full md:w-auto">
+              {actions.map((btnProps) => (
+                <Button
+                  {...btnProps}
+                  data-aw-close-menu-on-mobile
+                  class="w-full md:w-auto py-2.5 px-4 font-semibold shadow-none text-sm justify-center"
+                />
+              ))}
+            </span>
+          ) : (
+            ''
+          )
+        }
+      </div>
+    </div>
+  </div>
+</header>
+
+<style is:global>
+  .ssf-trust-bar {
+    background: #2f5646;
+    color: #f7f3ec;
+    border-bottom-color: #24483b;
+  }
+  .ssf-trust-certs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+  }
+  .ssf-trust-certs li {
+    display: flex;
+    align-items: center;
+  }
+  .ssf-trust-certs li + li::before {
+    content: '';
+    width: 2px;
+    height: 2px;
+    margin-inline: 0.6rem;
+    border-radius: 999px;
+    background: rgb(247 243 236 / 42%);
+    flex: none;
+  }
+  .ssf-trust-phone {
+    flex: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    color: rgb(247 243 236 / 78%);
+    white-space: nowrap;
+  }
+  .ssf-trust-phone strong {
+    margin-inline-start: 0.3rem;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+</style>
+
+{
+  isSticky && (
+    <script is:inline>
+      (function () {
+        var THRESHOLD = 40;
+
+        window.awApplyHeaderScrollState = function () {
+          var header = document.getElementById('header');
+          if (!header || !header.hasAttribute('data-aw-sticky-header')) return;
+          header.classList.toggle('scroll', window.scrollY > THRESHOLD);
+        };
+
+        window.awInitStickyHeaderScroll = function () {
+          window.awApplyHeaderScrollState();
+          if (window.__awStickyHeaderScrollAttached) return;
+          window.__awStickyHeaderScrollAttached = true;
+          var ticking = false;
+          window.addEventListener(
+            'scroll',
+            function () {
+              if (ticking) return;
+              ticking = true;
+              requestAnimationFrame(function () {
+                window.awApplyHeaderScrollState();
+                ticking = false;
+              });
+            },
+            { passive: true }
+          );
+        };
+
+        window.awInitStickyHeaderScroll();
+      })();
+    </script>
+  )
+}

@@ -1,0 +1,81 @@
+---
+import { Icon } from 'astro-icon/components';
+import PostTags from '~/components/blog/Tags.astro';
+
+import { APP_BLOG } from 'astrowind:config';
+import type { Post } from '~/types';
+
+import { getPermalink } from '~/utils/permalinks';
+import { getFormattedDate } from '~/utils/utils';
+
+export interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : '';
+const categoryLabel = post.category?.title || 'Guide';
+---
+
+<article class="max-w-md mx-auto md:max-w-none grid gap-6 md:gap-8 md:grid-cols-2 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+  {
+    link ? (
+      <a class="relative block group" href={link}>
+        <div class="relative aspect-video overflow-hidden rounded-xl border border-stone-200/80 bg-soft">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/10" aria-hidden="true" />
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="font-heading text-2xl font-semibold text-primary/40 tracking-tight">Sheer Superfood</span>
+          </div>
+          <span class="absolute bottom-3 left-3 text-[10px] font-semibold uppercase tracking-[0.14em] bg-elevated/95 border border-stone-200/80 px-2 py-1 text-heading">
+            {categoryLabel}
+          </span>
+        </div>
+      </a>
+    ) : (
+      <div class="relative aspect-video overflow-hidden rounded-xl border border-stone-200/80 bg-soft">
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/10" aria-hidden="true" />
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="font-heading text-2xl font-semibold text-primary/40 tracking-tight">Sheer Superfood</span>
+        </div>
+      </div>
+    )
+  }
+  <div class="mt-2">
+    <header>
+      <div class="mb-1">
+        <span class="text-sm text-muted">
+          <Icon name="tabler:clock" class="w-3.5 h-3.5 inline-block -mt-0.5" />
+          <time datetime={String(post.publishDate)} class="inline-block">{getFormattedDate(post.publishDate)}</time>
+          {
+            post.author && (
+              <>
+                {' '}
+                · <Icon name="tabler:user" class="w-3.5 h-3.5 inline-block -mt-0.5" />
+                <span>{post.author.replaceAll('-', ' ')}</span>
+              </>
+            )
+          }
+        </span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-heading font-semibold leading-tight mb-2 text-heading">
+        {
+          link ? (
+            <a class="hover:text-primary transition" href={link}>
+              {post.title}
+            </a>
+          ) : (
+            post.title
+          )
+        }
+      </h2>
+    </header>
+    {post.excerpt && <p class="text-muted text-base leading-relaxed">{post.excerpt}</p>}
+    {
+      post.tags && Array.isArray(post.tags) ? (
+        <footer class="mt-4">
+          <PostTags tags={post.tags} />
+        </footer>
+      ) : null
+    }
+  </div>
+</article>

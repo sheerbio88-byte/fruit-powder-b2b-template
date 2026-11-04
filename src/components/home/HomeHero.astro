@@ -1,0 +1,95 @@
+---
+import Button from '~/components/ui/Button.astro';
+
+export interface Props {
+  kicker?: string;
+  title?: string;
+  lede?: string;
+  image?: string;
+  imageAlt?: string;
+  badges?: string[];
+  quoteText?: string;
+  quoteHref?: string;
+  catalogText?: string;
+  catalogHref?: string;
+  oemText?: string;
+  oemHref?: string;
+  linesLabel?: string;
+}
+
+const {
+  kicker = 'Sheer Superfood · fruit & vegetable powders',
+  title = 'Fruit and vegetable powders for food and supplement brands',
+  lede = 'Bulk ingredients and OEM programs. Browse the catalog or send the specification you need.',
+  image = '/wp-content/uploads/2025/12/cropped-cropped-logo03-e1765874141220.png',
+  imageAlt = '',
+  badges = ['Fruit powder', 'Vegetable powder', 'Plant protein', 'OEM'],
+  quoteText = 'Request a quote',
+  quoteHref = '/contact/#inquiry-form',
+  catalogText = 'Catalog',
+  catalogHref = '/products/',
+  oemText = 'OEM',
+  oemHref = '/services/',
+  linesLabel = 'Product lines',
+} = Astro.props;
+---
+
+<section class="relative not-prose min-h-[min(82vh,680px)] flex items-end md:items-center overflow-hidden">
+  <div class="absolute inset-0" aria-hidden="true">
+    <img
+      src={image}
+      alt={imageAlt}
+      width="1280"
+      height="720"
+      class="h-full w-full object-cover object-[72%_center]"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="absolute inset-0 bg-stone-950/72 md:hidden"></div>
+    <div class="absolute inset-0 hidden md:block bg-gradient-to-r from-stone-950/78 via-stone-950/50 to-stone-950/25"></div>
+  </div>
+
+  <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-14 md:pt-32 md:pb-20">
+    <div class="max-w-2xl">
+      <p class="text-[11px] sm:text-xs font-semibold tracking-[0.14em] sm:tracking-[0.22em] uppercase text-stone-200/90 mb-5 break-words">
+        {kicker}
+      </p>
+
+      <h1 class="font-heading text-3xl sm:text-5xl lg:text-[3.35rem] font-medium leading-[1.08] tracking-tight text-white mb-5 break-words">
+        {title}
+      </h1>
+
+      <p class="text-base sm:text-lg text-stone-200/90 leading-relaxed max-w-xl mb-7">
+        {lede}
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3 mb-9">
+        <Button
+          variant="primary"
+          text={quoteText}
+          href={quoteHref}
+          class="bg-white text-secondary border-white hover:bg-soft hover:text-secondary hover:border-soft"
+        />
+        <a href={catalogHref} class="inline-flex items-center text-sm font-medium text-white/90 hover:text-white underline-offset-4 hover:underline">
+          {catalogText}
+          <span class="ms-1.5" aria-hidden="true">→</span>
+        </a>
+        <a href={oemHref} class="inline-flex items-center text-sm font-medium text-white/90 hover:text-white underline-offset-4 hover:underline">
+          {oemText}
+          <span class="ms-1.5" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <ul class="flex flex-wrap gap-2" aria-label={linesLabel}>
+        {
+          badges.map((badge) => (
+            <li class="inline-flex items-center rounded-sm border border-white/25 bg-white/10 px-2.5 py-1 text-[11px] sm:text-xs font-semibold tracking-wide uppercase text-white">
+              {badge}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
